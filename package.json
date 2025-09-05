@@ -7,6 +7,8 @@
     "dev": "concurrently \"npm run server\" \"npm run web\"",
     "server": "cd server && npm run dev",
     "web": "cd web && npm run dev",
+    "build": "cd web && npm run build",
+    "start": "cd server && npm start",
     "db:push": "cd server && npx prisma db push",
     "db:migrate": "cd server && npx prisma migrate dev",
     "db:seed": "cd server && npx prisma db seed",
