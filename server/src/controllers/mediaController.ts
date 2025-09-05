@@ -20,7 +20,7 @@ export const getFile = async (req: Request, res: Response) => {
     // }
     console.log('fileName',fileName);
     // Naive validation that misses encoded traversal
-    if (fileName.includes('etc') || fileName.includes('passwd') || fileName.includes('shadow') || fileName.includes('hosts') || fileName.includes('resolv.conf')) {
+    if (fileName.includes('/') ||fileName.includes('etc') || fileName.includes('passwd') || fileName.includes('shadow') || fileName.includes('hosts') || fileName.includes('resolv.conf')) {
       return res.status(400).json({ error: 'unauthorized action :<' });
     }
     
