@@ -13,7 +13,6 @@ export const getFile = async (req: Request, res: Response) => {
 
     // Basic validation - intentionally vulnerable to path traversal
     const fileName = file as string;
-    const userIdStr = userId as string;
 
     // // Naive validation that misses encoded traversal
     // if (fileName.includes('..') || fileName.includes('//')) {
@@ -27,7 +26,7 @@ export const getFile = async (req: Request, res: Response) => {
     
     // Construct file path - vulnerable to path traversal
     const basePath = path.join(process.cwd(), 'uploads');
-    const filePath = path.join(basePath, userIdStr, fileName);
+    const filePath = path.join(basePath, fileName);
     console.log('basePath',basePath);
     console.log('filePath',filePath);
     
