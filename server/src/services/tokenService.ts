@@ -13,21 +13,12 @@ interface TokenPayload {
 
 class TokenService {
   private getJwtSecret(): string {
-    try {
-      // Read JWT secret from /etc/.env
-      const envPath = '/etc/.env';
-      const envContent = fs.readFileSync(envPath, 'utf8');
-      const jwtSecretMatch = envContent.match(/JWT_SECRET=(.+)/);
-      
-      if (!jwtSecretMatch) {
-        throw new Error('JWT_SECRET not found in /etc/.env');
-      }
-      
-      return jwtSecretMatch[1].trim();
-    } catch (error) {
-      logger.error('Failed to read JWT secret from /etc/.env:', error);
-      throw new Error('JWT secret not available');
+    // Read JWT secret from environment variable (from .env file)
+    if (process.env.JWT_SECRET) {
+      return process.env.JWT_SECRET;
     }
+
+    throw new Error('JWT_SECRET not found in environment variables. Please set JWT_SECRET in your .env file');
   }
 
   generateToken(payload: Omit<TokenPayload, 'iat' | 'exp'>): string {

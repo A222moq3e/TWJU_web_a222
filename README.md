@@ -31,30 +31,18 @@ Create a PostgreSQL database:
 CREATE DATABASE student_dashboard_ctf;
 ```
 
-Update the database URL in `server/.env` (create this file if it doesn't exist):
+Create a `server/.env` file with your database URL and JWT secret:
 
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/student_dashboard_ctf"
+JWT_SECRET="supersecret_admin_signing_key"
 ```
 
 ### 3. Environment Configuration
 
-**Important**: The JWT secret must be stored in `/etc/.env` for the application to work properly.
+The application reads the JWT secret from the `JWT_SECRET` environment variable in `server/.env`. 
 
-On Unix/Linux systems, run:
-
-```bash
-sudo chmod +x setup-env.sh
-sudo ./setup-env.sh
-```
-
-On Windows, manually create `/etc/.env` with the following content:
-
-```
-JWT_SECRET=supersecret_admin_signing_key
-ADMIN_ID=1
-ADMIN_EMAIL=admin@site.local
-```
+**For CTF Challenge**: The LFI vulnerability targets the `.env` file itself, which contains the JWT secret and database configuration.
 
 ### 4. Database Migration and Seeding
 
@@ -65,10 +53,9 @@ npm run db:seed
 
 ### 5. Create Uploads Directory
 
-```bash
-sudo mkdir -p /var/app/uploads
-sudo chmod 755 /var/app/uploads
-```
+The uploads directory will be created automatically when you run the seed script. It will contain:
+- Sample avatar files for users
+- The LFI vulnerability targets the `.env` file in the server directory
 
 ### 6. Start the Application
 

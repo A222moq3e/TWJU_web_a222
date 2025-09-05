@@ -23,20 +23,19 @@ The `/media/file` endpoint has a path traversal vulnerability:
 
 1. **Intercept the avatar request** using a proxy tool (Burp Suite, OWASP ZAP, or browser dev tools)
 2. **Modify the `file` parameter** to perform directory traversal:
-   - Change `file=avatar.png` to `file=../../../../etc/.env`
+   - Change `file=avatar.png` to `file=../../.env`
    - Alternative encodings that might work:
-     - `file=..%2f..%2f..%2f..%2fetc%2f.env` (URL encoded)
-     - `file=..%252f..%252f..%252f..%252fetc%252f.env` (double URL encoded)
+     - `file=..%2f..%2f.env` (URL encoded)
+     - `file=..%252f..%252f.env` (double URL encoded)
 
 ### Step 4: Extract JWT Secret
 
-1. The LFI should return the contents of `/etc/.env`
+1. The LFI should return the contents of the `.env` file
 2. Look for the `JWT_SECRET` value in the response
 3. Example response:
    ```
-   JWT_SECRET=supersecret_admin_signing_key
-   ADMIN_ID=1
-   ADMIN_EMAIL=admin@site.local
+   DATABASE_URL="postgresql://postgres:password@localhost:5432/student_dashboard_ctf"
+   JWT_SECRET="supersecret_admin_signing_key"
    ```
 
 ### Step 5: Forge Admin JWT
@@ -90,19 +89,19 @@ const filePath = path.join(basePath, userIdStr, fileName);
 
 ### JWT Implementation
 
-The JWT secret is intentionally stored in `/etc/.env` to make it accessible via LFI:
+The JWT secret is read from the environment variable (from `.env` file):
 
 ```typescript
-private getJWTSecret(): string {
-  try {
-    // Read JWT secret from /etc/.env
-    const envPath = '/etc/.env';
-    const envContent = fs.readFileSync(envPath, 'utf8');
-    const jwtSecretMatch = envContent.match(/JWT_SECRET=(.+)/);
-    // ...
+private getJwtSecret(): string {
+  // Read JWT secret from environment variable (from .env file)
+  if (process.env.JWT_SECRET) {
+    return process.env.JWT_SECRET;
   }
+  throw new Error('JWT_SECRET not found in environment variables');
 }
 ```
+
+The LFI target is the `.env` file itself, which contains the JWT secret and database configuration.
 
 ### Admin Protection
 

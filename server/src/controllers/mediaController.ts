@@ -21,7 +21,7 @@ export const getFile = async (req: Request, res: Response) => {
     }
 
     // Construct file path - vulnerable to path traversal
-    const basePath = '/var/app/uploads';
+    const basePath = path.join(process.cwd(), 'uploads');
     const filePath = path.join(basePath, userIdStr, fileName);
 
     // Check if file exists
@@ -40,6 +40,7 @@ export const getFile = async (req: Request, res: Response) => {
     else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
     else if (ext === '.gif') contentType = 'image/gif';
     else if (ext === '.txt') contentType = 'text/plain';
+    else if (ext === '.json') contentType = 'application/json';
     else if (ext === '.env') contentType = 'text/plain';
 
     res.setHeader('Content-Type', contentType);

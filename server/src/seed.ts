@@ -90,7 +90,7 @@ async function main() {
   }
 
   // Create uploads directory and sample avatar for one student
-  const uploadsDir = '/var/app/uploads';
+  const uploadsDir = path.join(process.cwd(), 'uploads');
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
