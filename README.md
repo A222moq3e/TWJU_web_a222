@@ -76,12 +76,12 @@ sudo chmod 755 /var/app/uploads
 npm run dev
 ```
 
-This will start both the backend server (port 3001) and frontend development server (port 3000).
+This will start both the backend server (port 10003) and frontend development server (port 10002).
 
 ## Access the Application
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:3001
+- Frontend: http://localhost:10002
+- Backend API: http://localhost:10003
 
 ## Test Accounts
 

@@ -16,8 +16,8 @@ The application has been configured to work on both localhost and server environ
 npm run dev
 ```
 
-- Frontend: http://localhost:3000
-- Backend: http://localhost:3001
+- Frontend: http://localhost:10002
+- Backend: http://localhost:10003
 
 ## Server Deployment
 
@@ -28,7 +28,7 @@ Create a `.env` file in the server directory:
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/student_dashboard_ctf"
 HOST=0.0.0.0
-PORT=3001
+PORT=10003
 ```
 
 ### 2. Frontend Environment
@@ -37,10 +37,10 @@ For production builds, set the API URL:
 
 ```bash
 # Option 1: Environment variable
-export VITE_API_URL=http://your-server-ip:3001
+export VITE_API_URL=http://your-server-ip:10003
 
 # Option 2: Create web/.env.production
-echo "VITE_API_URL=http://your-server-ip:3001" > web/.env.production
+echo "VITE_API_URL=http://your-server-ip:10003" > web/.env.production
 ```
 
 ### 3. Build and Deploy
@@ -55,16 +55,16 @@ npm start
 
 ### 4. Firewall Configuration
 
-Make sure ports 3000 and 3001 are open:
+Make sure ports 10002 and 10003 are open:
 
 ```bash
 # Ubuntu/Debian
-sudo ufw allow 3000
-sudo ufw allow 3001
+sudo ufw allow 10002
+sudo ufw allow 10003
 
 # CentOS/RHEL
-sudo firewall-cmd --permanent --add-port=3000/tcp
-sudo firewall-cmd --permanent --add-port=3001/tcp
+sudo firewall-cmd --permanent --add-port=10002/tcp
+sudo firewall-cmd --permanent --add-port=10003/tcp
 sudo firewall-cmd --reload
 ```
 
@@ -94,7 +94,7 @@ server {
     server_name your-domain.com;
 
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:10002;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -106,7 +106,7 @@ server {
     }
 
     location /api {
-        proxy_pass http://localhost:3001;
+        proxy_pass http://localhost:10003;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -132,11 +132,11 @@ sudo systemctl reload nginx
 ### Check if services are listening on all interfaces:
 
 ```bash
-netstat -tlnp | grep :3000
-netstat -tlnp | grep :3001
+netstat -tlnp | grep :10002
+netstat -tlnp | grep :10003
 ```
 
-Should show `0.0.0.0:3000` and `0.0.0.0:3001` instead of `127.0.0.1:3000`.
+Should show `0.0.0.0:10002` and `0.0.0.0:10003` instead of `127.0.0.1:10002`.
 
 ### Check firewall status:
 
@@ -152,6 +152,6 @@ sudo firewall-cmd --list-ports
 
 ```bash
 # From another machine
-curl http://your-server-ip:3000
-curl http://your-server-ip:3001/health
+curl http://your-server-ip:10002
+curl http://your-server-ip:10003/health
 ```
