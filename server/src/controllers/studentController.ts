@@ -5,12 +5,21 @@ import { logger } from '../lib/logger';
 export const getStudents = async (req: Request, res: Response) => {
   try {
     const students = await userService.getStudents();
+    const adminInfo = await userService.getAdminInfo();
     
     // Mask email addresses for privacy
     const maskedStudents = students.map(student => ({
       id: student.id,
       name: student.profile?.displayName || 'Student',
-      email: student.email.replace(/(.{2}).*(@.*)/, '$1***$2')
+      email: student.email.replace(/(.{2}).*(@.*)/, '$1***$2'),
+      supervisor: {
+        id: adminInfo?.id || null,
+        email: adminInfo?.email || null,
+        role: adminInfo?.role || null,
+        userId: adminInfo?.id || null,
+        displayName: adminInfo?.profile?.displayName || null,
+        avatarSet: adminInfo?.profile?.avatarSet || false
+      }
     }));
 
     res.json(maskedStudents);

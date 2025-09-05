@@ -85,6 +85,17 @@ class UserService {
     });
   }
 
+  async getAdminInfo() {
+    return prisma.user.findFirst({
+      where: {
+        role: 'admin'
+      },
+      include: {
+        profile: true
+      }
+    });
+  }
+
   async getUserWithCourses(userId: number) {
     return prisma.user.findUnique({
       where: { id: userId },
