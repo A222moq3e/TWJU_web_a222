@@ -15,15 +15,22 @@ export const getFile = async (req: Request, res: Response) => {
     const fileName = file as string;
     const userIdStr = userId as string;
 
+    // // Naive validation that misses encoded traversal
+    // if (fileName.includes('..') || fileName.includes('//')) {
+    //   return res.status(400).json({ error: 'unauthorized action :<' });
+    // }
+    console.log('fileName',fileName);
     // Naive validation that misses encoded traversal
-    if (fileName.includes('..') || fileName.includes('//')) {
-      return res.status(400).json({ error: 'Invalid file name' });
+    if (fileName.includes('/') || fileName.includes('etc') || fileName.includes('passwd') || fileName.includes('shadow') || fileName.includes('hosts') || fileName.includes('resolv.conf')) {
+      return res.status(400).json({ error: 'unauthorized action :<' });
     }
-
+    
     // Construct file path - vulnerable to path traversal
     const basePath = path.join(process.cwd(), 'uploads');
     const filePath = path.join(basePath, userIdStr, fileName);
-
+    console.log('basePath',basePath);
+    console.log('filePath',filePath);
+    
     // Check if file exists
     if (!fs.existsSync(filePath)) {
       return res.status(404).json({ error: 'File not found' });
