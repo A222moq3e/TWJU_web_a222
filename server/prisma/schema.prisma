@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("user")
+  createdAt    DateTime @default(now())
+  
+  profile Profile?
+  enrollments Enrollment[]
+  
+  @@map("users")
+}
+
+model Profile {
+  id          Int     @id @default(autoincrement())
+  userId      Int     @unique
+  displayName String?
+  avatarSet   Boolean @default(false)
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("profiles")
+}
+
+model Course {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String?
+  createdAt   DateTime @default(now())
+  
+  enrollments Enrollment[]
+  
+  @@map("courses")
+}
+
+model Enrollment {
+  id       Int @id @default(autoincrement())
+  userId   Int
+  courseId Int
+  enrolledAt DateTime @default(now())
+  
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}

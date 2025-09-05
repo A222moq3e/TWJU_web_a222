@@ -1,0 +1,18 @@
+{
+  "name": "student-dashboard-ctf",
+  "version": "1.0.0",
+  "description": "Student Dashboard CTF Challenge",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run web\"",
+    "server": "cd server && npm run dev",
+    "web": "cd web && npm run dev",
+    "db:push": "cd server && npx prisma db push",
+    "db:migrate": "cd server && npx prisma migrate dev",
+    "db:seed": "cd server && npx prisma db seed",
+    "setup": "npm install && cd server && npm install && cd ../web && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
