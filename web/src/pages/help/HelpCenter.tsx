@@ -44,6 +44,12 @@ const HelpCenter: React.FC = () => {
                   Make sure you're using the correct email and password. If you've forgotten your password, contact support.
                 </p>
               </div>
+              <div>
+                <h4 className="font-medium text-academic-900">Can I trust this web?</h4>
+                <p className="text-academic-600 mt-1">
+                  Yes, this web is secure. we use the latest security practices to protect your data, like encryption and authentication. and save env data in .env file, and hire a good security team to pentest the web, you can contact our support team if you have any concerns.
+                </p>
+              </div>
             </div>
           </Card>
 
