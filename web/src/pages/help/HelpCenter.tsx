@@ -59,7 +59,7 @@ const HelpCenter: React.FC = () => {
               <ul className="mt-2 space-y-1">
                 <li>Email: support@studentdashboard.edu</li>
                 <li>Phone: (555) 123-4567</li>
-                <li>Office Hours: Monday-Friday, 9:00 AM - 5:00 PM</li>
+                <li>Office Hours: Sunday-Thursday, 7:00 AM - 3:00 PM</li>
               </ul>
             </div>
           </Card>
