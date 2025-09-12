@@ -4,6 +4,16 @@ export interface Student {
   id: number;
   name: string;
   email: string;
+  grade: string | null;
+  courses: Course[];
+  supervisor: {
+    id: number | null;
+    email: string | null;
+    role: string | null;
+    userId: number | null;
+    displayName: string | null;
+    avatarSet: boolean;
+  };
 }
 
 export interface Course {

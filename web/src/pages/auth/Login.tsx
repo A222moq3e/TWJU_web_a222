@@ -32,15 +32,15 @@ const Login: React.FC = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-photography-900">
-            Enter the Studio
+            Enter the Student Dashboard
           </h2>
           <p className="mt-2 text-center text-sm text-photography-600">
-            Embrace vulnerability through photography challenges.{' '}
+            Join as student{' '}
             <Link
               to="/register"
               className="font-medium text-primary-600 hover:text-primary-500"
             >
-              Join the challenge
+              Join as student
             </Link>
           </p>
         </div>

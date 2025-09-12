@@ -78,7 +78,7 @@ const Register: React.FC = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-photography-700">
-                Studio Access Code
+                Student Access Code
               </label>
               <input
                 id="password"
@@ -99,7 +99,7 @@ const Register: React.FC = () => {
                 disabled={loading}
                 className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Joining Challenge...' : 'Join the Challenge'}
+                {loading ? 'Joining Student Dashboard...' : 'Join the Student Dashboard'}
               </button>
             </div>
           </form>

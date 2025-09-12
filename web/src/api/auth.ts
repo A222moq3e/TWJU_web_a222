@@ -32,5 +32,29 @@ export const authApi = {
   updateMe: async (payload: { displayName?: string }): Promise<User> => {
     const response = await apiClient.put('/auth/me', payload);
     return response.data;
+  },
+
+  patchName: async (displayName?: string): Promise<User> => {
+    const response = await apiClient.patch('/auth/me/name', { displayName });
+    return response.data;
+  },
+
+  patchEmail: async (email: string): Promise<User> => {
+    const response = await apiClient.patch('/auth/me/email', { email });
+    return response.data;
+  },
+
+  patchGrade: async (grade?: string): Promise<User> => {
+    const response = await apiClient.patch('/auth/me/grade', { grade });
+    return response.data;
+  },
+
+  uploadAvatar: async (file: File): Promise<User> => {
+    const form = new FormData();
+    form.append('avatar', file);
+    const response = await apiClient.patch('/auth/me/avatar', form, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
   }
 };

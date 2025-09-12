@@ -6,6 +6,9 @@ const UpdateProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [saving, setSaving] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [email, setEmail] = useState('');
+  const [grade, setGrade] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -15,6 +18,7 @@ const UpdateProfile: React.FC = () => {
         const me = await authApi.getMe();
         setUser(me);
         setDisplayName(me.displayName || '');
+        setEmail(me.email);
       } catch (e: any) {
         setError(e.response?.data?.error || 'Failed to load profile');
       }
@@ -28,16 +32,42 @@ const UpdateProfile: React.FC = () => {
     setError('');
     setMessage('');
     try {
-      const updated = await authApi.updateMe({ displayName });
-      setUser(updated);
-      setMessage('Profile updated');
-      // keep localStorage user in sync
-      const savedUser = localStorage.getItem('user');
-      if (savedUser) {
-        const parsed = JSON.parse(savedUser);
-        parsed.displayName = updated.displayName;
-        localStorage.setItem('user', JSON.stringify(parsed));
+      // Send partial updates in multiple PATCH requests
+      if (displayName !== (user?.displayName || '')) {
+        const updated = await authApi.patchName(displayName);
+        setUser(updated);
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+          const parsed = JSON.parse(savedUser);
+          parsed.displayName = updated.displayName;
+          localStorage.setItem('user', JSON.stringify(parsed));
+        }
       }
+      if (email && email !== user?.email) {
+        const updated = await authApi.patchEmail(email);
+        setUser(updated);
+        const savedUser2 = localStorage.getItem('user');
+        if (savedUser2) {
+          const parsed = JSON.parse(savedUser2);
+          parsed.email = updated.email;
+          localStorage.setItem('user', JSON.stringify(parsed));
+        }
+      }
+      if (grade) {
+        const updated = await authApi.patchGrade(grade);
+        setUser(updated);
+      }
+      if (avatarFile) {
+        const updated = await authApi.uploadAvatar(avatarFile);
+        setUser(updated);
+        const savedUser = localStorage.getItem('user');
+        if (savedUser) {
+          const parsed = JSON.parse(savedUser);
+          parsed.avatarSet = true;
+          localStorage.setItem('user', JSON.stringify(parsed));
+        }
+      }
+      setMessage('Profile updated');
     } catch (e: any) {
       setError(e.response?.data?.error || 'Failed to update profile');
     } finally {
@@ -69,6 +99,36 @@ const UpdateProfile: React.FC = () => {
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Your display name"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-photography-700">Email</label>
+              <input
+                type="email"
+                className="mt-1 block w-full rounded-md border-photography-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.edu"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-photography-700">Grade</label>
+              <input
+                type="text"
+                className="mt-1 block w-full rounded-md border-photography-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                placeholder="e.g., Sophomore"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-photography-700">Avatar</label>
+              <input
+                type="file"
+                accept="image/png,image/jpeg"
+                className="mt-1 block w-full text-sm text-gray-700"
+                onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
+              />
+              <p className="text-xs text-gray-500 mt-1">PNG or JPG. Recommended 256x256.</p>
             </div>
             <div className="flex items-center justify-between">
               <a href="/dashboard" className="text-sm text-primary-700">Back to dashboard</a>

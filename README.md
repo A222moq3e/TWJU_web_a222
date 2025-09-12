@@ -1,4 +1,4 @@
-# 📸 Vulnerability University CTF
+# Student Dashboard CTF
 
 A photography education platform built with React and Express.js that connects vulnerability with creative challenges. This platform helps photographers embrace vulnerability through artistic expression and growth.
 

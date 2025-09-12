@@ -47,3 +47,7 @@ Thumbs.db
 
 # Prisma
 server/prisma/migrations/
+
+
+DEPLOYMENT.md
+SOLUTION.md

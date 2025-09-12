@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-photography-900">
-              📸 Vulnerability University
+              Student Dashboard
             </Link>
           </div>
           
@@ -25,14 +25,14 @@ const Navbar: React.FC = () => {
             {user ? (
               <>
                 <Link to="/dashboard" className="text-photography-700 hover:text-photography-900">
-                  Studio
+                  Dashboard
                 </Link>
                 <Link to="/help" className="text-photography-700 hover:text-photography-900">
-                  Support
+                  Help
                 </Link>
                 {user.role === 'admin' && (
                   <Link to="/admin" className="text-primary-600 hover:text-primary-700 font-medium">
-                    Admin
+                    Admin Panel
                   </Link>
                 )}
                 <span className="text-photography-600">
@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
                   Login
                 </Link>
                 <Link to="/register" className="btn-primary text-sm">
-                  Join Challenge
+                  Join as student
                 </Link>
               </>
             )}
