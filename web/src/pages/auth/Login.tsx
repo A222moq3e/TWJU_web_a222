@@ -55,7 +55,7 @@ const Login: React.FC = () => {
             
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-photography-700">
-                Artist Email
+                Student Email
               </label>
               <input
                 id="email"
@@ -72,7 +72,7 @@ const Login: React.FC = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-photography-700">
-                Studio Access Code
+                Password
               </label>
               <input
                 id="password"
@@ -83,7 +83,7 @@ const Login: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input mt-1"
-                placeholder="Enter your access code"
+                placeholder="Enter your password"
               />
             </div>
 
@@ -93,7 +93,7 @@ const Login: React.FC = () => {
                 disabled={loading}
                 className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Entering Studio...' : 'Enter Studio'}
+                {loading ? 'Entering Student Dashboard...' : 'Enter Student Dashboard'}
               </button>
             </div>
           </form>

@@ -42,7 +42,7 @@ async function main() {
       create: {
         email: student.email,
         passwordHash: studentPassword,
-        role: 'user',
+        role: 'student',
         profile: {
           create: {
             displayName: student.name,
@@ -55,10 +55,10 @@ async function main() {
 
   // Create courses
   const courses = [
-    { title: 'Introduction to Computer Science', description: 'Basic programming concepts' },
-    { title: 'Web Development Fundamentals', description: 'HTML, CSS, and JavaScript basics' },
-    { title: 'Database Design', description: 'Relational database concepts and SQL' },
-    { title: 'Cybersecurity Basics', description: 'Introduction to security concepts' }
+    { title: 'Introduction to Computer Science', description: 'Basic programming concepts', sectionNumber: '001', courseCode: 'CS101', hours: 3 },
+    { title: 'Web Development Fundamentals', description: 'HTML, CSS, and JavaScript basics', sectionNumber: '002', courseCode: 'WEB201', hours: 3 },
+    { title: 'Database Design', description: 'Relational database concepts and SQL', sectionNumber: '001', courseCode: 'DB301', hours: 4 },
+    { title: 'Cybersecurity Basics', description: 'Introduction to security concepts', sectionNumber: '003', courseCode: 'SEC101', hours: 2 }
   ];
 
   const createdCourses = [];
@@ -69,22 +69,17 @@ async function main() {
     createdCourses.push(created);
   }
 
-  // Create enrollments for some students
+  // Enroll every student in all 4 courses
   const allStudents = await prisma.user.findMany({
-    where: { role: 'user' }
+    where: { role: 'student' }
   });
 
-  for (let i = 0; i < allStudents.length; i++) {
-    const student = allStudents[i];
-    const numCourses = Math.floor(Math.random() * 3) + 1; // 1-3 courses per student
-    
-    for (let j = 0; j < numCourses; j++) {
-      const course = createdCourses[j % createdCourses.length];
-      await prisma.enrollment.create({
-        data: {
-          userId: student.id,
-          courseId: course.id
-        }
+  for (const student of allStudents) {
+    for (const course of createdCourses) {
+      await prisma.enrollment.upsert({
+        where: { userId_courseId: { userId: student.id, courseId: course.id } },
+        update: {},
+        create: { userId: student.id, courseId: course.id }
       });
     }
   }
@@ -97,37 +92,43 @@ async function main() {
 
   // Find a student to give an avatar
   const studentWithAvatar = allStudents[0];
-  const studentUploadDir = path.join(uploadsDir, studentWithAvatar.id.toString());
-  if (!fs.existsSync(studentUploadDir)) {
-    fs.mkdirSync(studentUploadDir, { recursive: true });
+  if (studentWithAvatar) {
+    const studentUploadDir = path.join(uploadsDir, studentWithAvatar.id.toString());
+    if (!fs.existsSync(studentUploadDir)) {
+      fs.mkdirSync(studentUploadDir, { recursive: true });
+    }
+
+    // Create a simple avatar file (1x1 PNG)
+    const avatarPath = path.join(studentUploadDir, 'avatar.png');
+    const pngData = Buffer.from([
+      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
+      0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, // 1x1 dimensions
+      0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, 0xDE, // bit depth, color type, etc.
+      0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, 0x54, // IDAT chunk
+      0x08, 0x99, 0x01, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01,
+      0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82 // IEND chunk
+    ]);
+    
+    fs.writeFileSync(avatarPath, pngData);
+
+    // Update the student's profile to show they have an avatar
+    await prisma.profile.update({
+      where: { userId: studentWithAvatar.id },
+      data: { avatarSet: true }
+    });
+  } else {
+    console.log('No students found to assign an avatar.');
   }
-
-  // Create a simple avatar file (1x1 PNG)
-  const avatarPath = path.join(studentUploadDir, 'avatar.png');
-  const pngData = Buffer.from([
-    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
-    0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, // IHDR chunk
-    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, // 1x1 dimensions
-    0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53, 0xDE, // bit depth, color type, etc.
-    0x00, 0x00, 0x00, 0x0C, 0x49, 0x44, 0x41, 0x54, // IDAT chunk
-    0x08, 0x99, 0x01, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01,
-    0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82 // IEND chunk
-  ]);
-  
-  fs.writeFileSync(avatarPath, pngData);
-
-  // Update the student's profile to show they have an avatar
-  await prisma.profile.update({
-    where: { userId: studentWithAvatar.id },
-    data: { avatarSet: true }
-  });
 
   console.log('Database seeded successfully!');
   console.log('Admin user: admin@site.local / admin123');
   console.log('Test students: john.doe@student.local / student123');
   console.log('Created uploads directory with sample avatar');
   console.log(`Admin user ID: ${admin.id}`);
-  console.log(`Student with avatar ID: ${studentWithAvatar.id}`);
+  if (studentWithAvatar) {
+    console.log(`Student with avatar ID: ${studentWithAvatar.id}`);
+  }
 }
 
 main()

@@ -39,6 +39,9 @@ model Course {
   id          Int    @id @default(autoincrement())
   title       String
   description String?
+  sectionNumber String?
+  courseCode  String?
+  hours       Int?
   createdAt   DateTime @default(now())
   
   enrollments Enrollment[]

@@ -21,6 +21,9 @@ export interface Course {
   title: string;
   description?: string;
   enrolledAt: string;
+  sectionNumber?: string;
+  courseCode?: string;
+  hours?: number;
 }
 
 export interface DashboardData {

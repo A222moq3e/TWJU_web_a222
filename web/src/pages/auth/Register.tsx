@@ -38,15 +38,15 @@ const Register: React.FC = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-photography-900">
-            Join the Creative Challenge
+            Join the Student Dashboard
           </h2>
           <p className="mt-2 text-center text-sm text-photography-600">
-            Ready to embrace vulnerability through photography?{' '}
+            Ready to join the student dashboard?{' '}
             <Link
               to="/login"
               className="font-medium text-primary-600 hover:text-primary-500"
             >
-              Already have studio access?
+              Already have student dashboard access?
             </Link>
           </p>
         </div>
@@ -61,7 +61,7 @@ const Register: React.FC = () => {
             
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-photography-700">
-                Artist Email
+                Student Email
               </label>
               <input
                 id="email"
@@ -78,7 +78,7 @@ const Register: React.FC = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-photography-700">
-                Student Access Code
+                Password
               </label>
               <input
                 id="password"
@@ -89,7 +89,7 @@ const Register: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input mt-1"
-                placeholder="Create your access code"
+                placeholder="Create your password"
               />
             </div>
 
@@ -99,7 +99,7 @@ const Register: React.FC = () => {
                 disabled={loading}
                 className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Joining Student Dashboard...' : 'Join the Student Dashboard'}
+                {loading ? 'Joining Student Dashboard...' : 'Join Student Dashboard'}
               </button>
             </div>
           </form>

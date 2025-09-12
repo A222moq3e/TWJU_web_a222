@@ -37,6 +37,38 @@ class UserService {
       }
     });
 
+    // Ensure new students are enrolled in at least 3 courses
+    try {
+      // Count existing courses
+      const courseCount = await prisma.course.count();
+      // If fewer than 3 exist, create default ones
+      if (courseCount < 3) {
+        const defaults = [
+          { title: 'Orientation 101', description: 'Welcome and orientation', sectionNumber: '001', courseCode: 'OR101', hours: 1 },
+          { title: 'Study Skills', description: 'Effective learning strategies', sectionNumber: '001', courseCode: 'SS201', hours: 2 },
+          { title: 'Campus Safety', description: 'Safety and security overview', sectionNumber: '001', courseCode: 'CS100', hours: 1 },
+        ];
+        // Create only the missing number to reach 3
+        for (let i = 0; i < 3 - courseCount; i++) {
+          await prisma.course.create({ data: defaults[i] });
+        }
+      }
+
+      // Fetch 3 courses (any)
+      const courses = await prisma.course.findMany({ take: 3, orderBy: { id: 'asc' } });
+      // Enroll the user into those courses (skip if already enrolled)
+      for (const course of courses) {
+        await prisma.enrollment.upsert({
+          where: { userId_courseId: { userId: user.id, courseId: course.id } },
+          update: {},
+          create: { userId: user.id, courseId: course.id }
+        });
+      }
+    } catch (e) {
+      // Best-effort enrollment; don't block registration
+      (logger as any)?.warn?.('Enrollment during registration failed', e);
+    }
+
     return {
       id: user.id,
       email: user.email,

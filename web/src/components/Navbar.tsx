@@ -27,17 +27,17 @@ const Navbar: React.FC = () => {
                 <Link to="/dashboard" className="text-photography-700 hover:text-photography-900">
                   Dashboard
                 </Link>
-                <Link to="/help" className="text-photography-700 hover:text-photography-900">
+                {/* <Link to="/help" className="text-photography-700 hover:text-photography-900">
                   Help
-                </Link>
+                </Link> */}
                 {user.role === 'admin' && (
                   <Link to="/admin" className="text-primary-600 hover:text-primary-700 font-medium">
                     Admin Panel
                   </Link>
                 )}
-                <span className="text-photography-600">
+                {/* <span className="text-photography-600">
                   {user.displayName || user.email}
-                </span>
+                </span> */}
                 <button
                   onClick={handleLogout}
                   className="btn-secondary text-sm"

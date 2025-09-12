@@ -8,16 +8,9 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#fef7ff',
-          100: '#fce7ff',
-          200: '#f8d0ff',
-          300: '#f2a8ff',
-          400: '#e970ff',
-          500: '#d946ef',
-          600: '#c026d3',
-          700: '#a21caf',
-          800: '#86198f',
-          900: '#701a75',
+          400: '#55A6D9',
+          500: '#2C7BBF',
+          600: '#0F6DBF',
         },
         photography: {
           50: '#fafafa',
