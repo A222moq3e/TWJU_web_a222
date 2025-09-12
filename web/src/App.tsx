@@ -16,7 +16,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; requireAdmin?: boole
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-academic-50 flex items-center justify-center">
+      <div className="min-h-screen bg-photography-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
       </div>
     );
@@ -36,7 +36,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; requireAdmin?: boole
 const AppContent: React.FC = () => {
   return (
     <Router>
-      <div className="min-h-screen bg-academic-50">
+      <div className="min-h-screen bg-photography-50">
         <Navbar />
         <Routes>
           <Route path="/login" element={<Login />} />

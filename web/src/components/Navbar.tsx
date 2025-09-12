@@ -12,30 +12,30 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-academic-200">
+    <nav className="bg-white shadow-sm border-b border-photography-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/" className="text-xl font-bold text-academic-900">
-              Student Dashboard
+            <Link to="/" className="text-xl font-bold text-photography-900">
+              📸 Vulnerability University
             </Link>
           </div>
           
           <div className="flex items-center space-x-4">
             {user ? (
               <>
-                <Link to="/dashboard" className="text-academic-700 hover:text-academic-900">
-                  Dashboard
+                <Link to="/dashboard" className="text-photography-700 hover:text-photography-900">
+                  Studio
                 </Link>
-                <Link to="/help" className="text-academic-700 hover:text-academic-900">
-                  Help
+                <Link to="/help" className="text-photography-700 hover:text-photography-900">
+                  Support
                 </Link>
                 {user.role === 'admin' && (
                   <Link to="/admin" className="text-primary-600 hover:text-primary-700 font-medium">
                     Admin
                   </Link>
                 )}
-                <span className="text-academic-600">
+                <span className="text-photography-600">
                   {user.displayName || user.email}
                 </span>
                 <button
@@ -47,11 +47,11 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                <Link to="/login" className="text-academic-700 hover:text-academic-900">
+                <Link to="/login" className="text-photography-700 hover:text-photography-900">
                   Login
                 </Link>
                 <Link to="/register" className="btn-primary text-sm">
-                  Register
+                  Join Challenge
                 </Link>
               </>
             )}

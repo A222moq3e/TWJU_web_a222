@@ -34,19 +34,19 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-academic-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-photography-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-academic-900">
-            Create your account
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-photography-900">
+            Join the Creative Challenge
           </h2>
-          <p className="mt-2 text-center text-sm text-academic-600">
-            Or{' '}
+          <p className="mt-2 text-center text-sm text-photography-600">
+            Ready to embrace vulnerability through photography?{' '}
             <Link
               to="/login"
               className="font-medium text-primary-600 hover:text-primary-500"
             >
-              sign in to your existing account
+              Already have studio access?
             </Link>
           </p>
         </div>
@@ -60,8 +60,8 @@ const Register: React.FC = () => {
             )}
             
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-academic-700">
-                Email address
+              <label htmlFor="email" className="block text-sm font-medium text-photography-700">
+                Artist Email
               </label>
               <input
                 id="email"
@@ -72,13 +72,13 @@ const Register: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input mt-1"
-                placeholder="Enter your email"
+                placeholder="your.art@vulnerability.edu"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-academic-700">
-                Password
+              <label htmlFor="password" className="block text-sm font-medium text-photography-700">
+                Studio Access Code
               </label>
               <input
                 id="password"
@@ -89,7 +89,7 @@ const Register: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input mt-1"
-                placeholder="Enter your password"
+                placeholder="Create your access code"
               />
             </div>
 
@@ -99,7 +99,7 @@ const Register: React.FC = () => {
                 disabled={loading}
                 className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Creating account...' : 'Create account'}
+                {loading ? 'Joining Challenge...' : 'Join the Challenge'}
               </button>
             </div>
           </form>

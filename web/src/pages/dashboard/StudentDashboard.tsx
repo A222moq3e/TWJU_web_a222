@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
 import { studentsApi, DashboardData } from '../../api/students';
 import Card from '../../components/Card';
 import Avatar from '../../components/Avatar';
 
 const StudentDashboard: React.FC = () => {
-  const { user } = useAuth();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,14 +25,14 @@ const StudentDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-academic-50 py-8">
+      <div className="min-h-screen bg-photography-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-academic-200 rounded w-1/4 mb-6"></div>
+            <div className="h-8 bg-photography-200 rounded w-1/4 mb-6"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="h-64 bg-academic-200 rounded-lg"></div>
-              <div className="h-64 bg-academic-200 rounded-lg"></div>
-              <div className="h-64 bg-academic-200 rounded-lg"></div>
+              <div className="h-64 bg-photography-200 rounded-lg"></div>
+              <div className="h-64 bg-photography-200 rounded-lg"></div>
+              <div className="h-64 bg-photography-200 rounded-lg"></div>
             </div>
           </div>
         </div>
@@ -44,9 +42,9 @@ const StudentDashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-academic-50 py-8">
+      <div className="min-h-screen bg-photography-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+          <div className="bg-vulnerability-50 border border-vulnerability-200 text-vulnerability-600 px-4 py-3 rounded-lg">
             {error}
           </div>
         </div>
@@ -55,12 +53,20 @@ const StudentDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-academic-50 py-8">
+    <div className="min-h-screen bg-photography-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-photography-900 mb-2">
+            📸 Your Photography Studio
+          </h1>
+          <p className="text-photography-600 text-lg">
+            Embrace vulnerability through creative challenges. Every photograph tells a story of courage.
+          </p>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Profile Card */}
-          <Card title="Profile">
+          {/* Artist Profile Card */}
+          <Card title="Artist Profile">
             <div className="flex items-center space-x-4">
               <Avatar
                 userId={dashboardData?.user.id || 0}
@@ -68,59 +74,76 @@ const StudentDashboard: React.FC = () => {
                 className="w-16 h-16"
               />
               <div>
-                <h3 className="text-lg font-medium text-academic-900">
-                  {dashboardData?.user.displayName || 'Student'}
+                <h3 className="text-lg font-medium text-photography-900">
+                  {dashboardData?.user.displayName || 'Artist'}
                 </h3>
-                <p className="text-academic-600">{dashboardData?.user.email}</p>
+                <p className="text-photography-600">{dashboardData?.user.email}</p>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                  {dashboardData?.user.role}
+                  {dashboardData?.user.role === 'admin' ? 'Mentor' : 'Photographer'}
                 </span>
               </div>
             </div>
           </Card>
 
-          {/* Courses Card */}
-          <Card title="My Courses">
+          {/* Vulnerability Challenges Card */}
+          <Card title="Vulnerability Challenges">
             <div className="space-y-3">
               {dashboardData?.courses && dashboardData.courses.length > 0 ? (
                 dashboardData.courses.map((course) => (
-                  <div key={course.id} className="border-l-4 border-primary-500 pl-4">
-                    <h4 className="font-medium text-academic-900">{course.title}</h4>
+                  <div key={course.id} className="border-l-4 border-vulnerability-500 pl-4">
+                    <h4 className="font-medium text-photography-900">{course.title}</h4>
                     {course.description && (
-                      <p className="text-sm text-academic-600">{course.description}</p>
+                      <p className="text-sm text-photography-600">{course.description}</p>
                     )}
-                    <p className="text-xs text-academic-500">
-                      Enrolled: {new Date(course.enrolledAt).toLocaleDateString()}
+                    <p className="text-xs text-photography-500">
+                      Started: {new Date(course.enrolledAt).toLocaleDateString()}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-academic-500">No courses enrolled yet.</p>
+                <div className="text-center py-4">
+                  <p className="text-photography-500 mb-2">No challenges yet.</p>
+                  <p className="text-sm text-photography-400">Ready to embrace vulnerability?</p>
+                </div>
               )}
             </div>
           </Card>
 
-          {/* Quick Actions Card */}
-          <Card title="Quick Actions">
+          {/* Studio Actions Card */}
+          <Card title="Studio Actions">
             <div className="space-y-3">
               <button className="w-full btn-primary text-sm">
-                View All Courses
+                Start New Challenge
               </button>
               <button className="w-full btn-secondary text-sm">
-                Update Profile
+                Update Portfolio
               </button>
               <button className="w-full btn-secondary text-sm">
-                View Grades
+                View Gallery
               </button>
             </div>
           </Card>
         </div>
 
-        {/* Recent Activity */}
+        {/* Creative Journey */}
         <div className="mt-8">
-          <Card title="Recent Activity">
-            <div className="text-academic-500">
-              No recent activity to display.
+          <Card title="Creative Journey">
+            <div className="text-center py-8">
+              <div className="text-6xl mb-4">🎨</div>
+              <h3 className="text-xl font-semibold text-photography-900 mb-2">
+                Your Story Awaits
+              </h3>
+              <p className="text-photography-600 mb-4">
+                Every vulnerability you embrace becomes a masterpiece. Start your next challenge today.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <button className="btn-primary">
+                  Begin New Challenge
+                </button>
+                <button className="btn-secondary">
+                  View Past Work
+                </button>
+              </div>
             </div>
           </Card>
         </div>

@@ -1,6 +1,6 @@
-# Student Dashboard CTF
+# 📸 Vulnerability University CTF
 
-A web application built with React and Express.js for educational purposes.
+A photography education platform built with React and Express.js that connects vulnerability with creative challenges. This platform helps photographers embrace vulnerability through artistic expression and growth.
 
 ## Tech Stack
 
@@ -28,13 +28,13 @@ npm run setup
 Create a PostgreSQL database:
 
 ```sql
-CREATE DATABASE student_dashboard_ctf;
+CREATE DATABASE vulnerability_university_ctf;
 ```
 
 Create a `server/.env` file with your database URL and JWT secret:
 
 ```env
-DATABASE_URL="postgresql://username:password@localhost:5432/student_dashboard_ctf"
+DATABASE_URL="postgresql://username:password@localhost:5432/vulnerability_university_ctf"
 JWT_SECRET="supersecret_admin_signing_key"
 ```
 
@@ -42,7 +42,7 @@ JWT_SECRET="supersecret_admin_signing_key"
 
 The application reads the JWT secret from the `JWT_SECRET` environment variable in `server/.env`. 
 
-**For CTF Challenge**: The LFI vulnerability targets the `.env` file itself, which contains the JWT secret and database configuration.
+**For CTF Challenge**: The LFI vulnerability targets the `.env` file itself, which contains the JWT secret and database configuration. This vulnerability represents the challenge of exposing one's creative process and artistic vulnerabilities.
 
 ### 4. Database Migration and Seeding
 
@@ -54,8 +54,8 @@ npm run db:seed
 ### 5. Create Uploads Directory
 
 The uploads directory will be created automatically when you run the seed script. It will contain:
-- Sample avatar files for users
-- The LFI vulnerability targets the `.env` file in the server directory
+- Sample portfolio images for photographers
+- The LFI vulnerability targets the `.env` file in the server directory, representing the exposure of creative vulnerabilities
 
 ### 6. Start the Application
 
@@ -74,18 +74,18 @@ This will start both the backend server (port 10003) and frontend development se
 
 After seeding the database, you can use these test accounts:
 
-- **Admin**: admin@site.local / admin123
-- **Student**: john.doe@student.local / student123
+- **Mentor**: admin@site.local / admin123
+- **Photographer**: john.doe@student.local / student123
 
 ## API Endpoints
 
-- `POST /auth/register` - User registration
-- `POST /auth/login` - User login
-- `GET /auth/me` - Get current user info
-- `GET /students/` - Get list of students
-- `GET /students/dashboard` - Get dashboard data
-- `GET /media/file` - File access endpoint
-- `GET /admin/` - Admin panel (requires admin role)
+- `POST /auth/register` - Artist registration
+- `POST /auth/login` - Studio access
+- `GET /auth/me` - Get current artist info
+- `GET /students/` - Get list of photographers
+- `GET /students/dashboard` - Get studio dashboard data
+- `GET /media/file` - Portfolio file access endpoint
+- `GET /admin/` - Mentor panel (requires admin role)
 
 ## Development
 
