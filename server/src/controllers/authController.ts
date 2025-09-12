@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 import { userService } from '../services/userService';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 import { tokenService } from '../services/tokenService';
 import { logger } from '../lib/logger';
 
@@ -139,22 +142,111 @@ export const getMyDashboard = async (req: Request, res: Response) => {
   }
 };
 
-export const updateMe = async (req: Request, res: Response) => {
+export const updateMyName = async (req: Request, res: Response) => {
   try {
     const userId = parseInt((req as any).user.sub);
     const { displayName } = req.body as { displayName?: string };
+    const updated = await userService.setDisplayName(userId, displayName);
+    res.json({
+      id: updated.id,
+      email: updated.email,
+      role: updated.role,
+      displayName: updated.profile?.displayName,
+      avatarSet: updated.profile?.avatarSet || false,
+      grade: (updated as any).profile?.grade
+    });
+  } catch (error) {
+    logger.error('Update name error:', error);
+    res.status(500).json({ error: 'Failed to update name' });
+  }
+};
 
-    const updated = await userService.updateUserProfile(userId, { displayName });
+export const updateMyEmail = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt((req as any).user.sub);
+    const { email } = req.body as { email: string };
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+    const updated = await userService.setEmail(userId, email);
+    res.json({
+      id: updated.id,
+      email: updated.email,
+      role: updated.role,
+      displayName: updated.profile?.displayName,
+      avatarSet: updated.profile?.avatarSet || false,
+      grade: (updated as any).profile?.grade
+    });
+  } catch (error) {
+    logger.error('Update email error:', error);
+    res.status(500).json({ error: 'Failed to update email' });
+  }
+};
+
+export const updateMyGrade = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt((req as any).user.sub);
+    const { grade } = req.body as { grade?: string };
+    const updated = await userService.setGrade(userId, grade);
+    res.json({
+      id: updated.id,
+      email: updated.email,
+      role: updated.role,
+      displayName: updated.profile?.displayName,
+      avatarSet: updated.profile?.avatarSet || false,
+      grade: (updated as any).profile?.grade
+    });
+  } catch (error) {
+    logger.error('Update grade error:', error);
+    res.status(500).json({ error: 'Failed to update grade' });
+  }
+};
+
+// Multer setup for avatar uploads
+const upload = multer({ dest: path.join(process.cwd(), 'server', 'uploads', 'tmp') });
+
+export const uploadAvatarMiddleware = upload.single('avatar');
+
+export const updateMyAvatar = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt((req as any).user.sub);
+    const file = (req as any).file as Express.Multer.File | undefined;
+    if (!file) {
+      return res.status(400).json({ error: 'Avatar file is required' });
+    }
+
+    const uploadsDir = path.join(process.cwd(), 'server', 'uploads', String(userId));
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+    const targetPath = path.join(uploadsDir, 'avatar.png');
+    fs.copyFileSync(file.path, targetPath);
+    fs.unlinkSync(file.path);
+
+    const updated = await userService.updateUserProfilePartial(userId, { avatarSet: true });
 
     res.json({
       id: updated.id,
       email: updated.email,
       role: updated.role,
       displayName: updated.profile?.displayName,
-      avatarSet: updated.profile?.avatarSet || false
+      avatarSet: true
     });
   } catch (error) {
-    logger.error('Update me error:', error);
-    res.status(500).json({ error: 'Failed to update profile' });
+    logger.error('Update avatar error:', error);
+    res.status(500).json({ error: 'Failed to update avatar' });
+  }
+};
+
+export const getMyAvatar = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt((req as any).user.sub);
+    const avatarPath = path.join(process.cwd(), 'server', 'uploads', String(userId), 'avatar.png');
+    if (!fs.existsSync(avatarPath)) {
+      return res.status(404).json({ error: 'Avatar not found' });
+    }
+    res.setHeader('Content-Type', 'image/png');
+    fs.createReadStream(avatarPath).pipe(res);
+  } catch (error) {
+    logger.error('Get avatar error:', error);
+    res.status(500).json({ error: 'Failed to get avatar' });
   }
 };

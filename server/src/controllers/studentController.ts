@@ -6,12 +6,18 @@ export const getStudents = async (req: Request, res: Response) => {
   try {
     const students = await userService.getStudents();
     const adminInfo = await userService.getAdminInfo();
-    
-    // Mask email addresses for privacy
-    const maskedStudents = students.map(student => ({
+
+    const result = students.map(student => ({
       id: student.id,
       name: student.profile?.displayName || 'Student',
       email: student.email.replace(/(.{2}).*(@.*)/, '$1***$2'),
+      grade: (student as any).profile?.grade || null,
+      courses: (student as any).enrollments?.map((enrollment: any) => ({
+        id: enrollment.course.id,
+        title: enrollment.course.title,
+        description: enrollment.course.description,
+        enrolledAt: enrollment.enrolledAt
+      })) || [],
       supervisor: {
         id: adminInfo?.id || null,
         email: adminInfo?.email || null,
@@ -22,7 +28,7 @@ export const getStudents = async (req: Request, res: Response) => {
       }
     }));
 
-    res.json(maskedStudents);
+    res.json(result);
   } catch (error) {
     logger.error('Get students error:', error);
     res.status(500).json({ error: 'Failed to get students' });

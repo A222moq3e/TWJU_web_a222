@@ -14,7 +14,7 @@ model User {
   id           Int      @id @default(autoincrement())
   email        String   @unique
   passwordHash String
-  role         String   @default("user")
+  role         String   @default("student")
   createdAt    DateTime @default(now())
   
   profile Profile?
@@ -28,6 +28,7 @@ model Profile {
   userId      Int     @unique
   displayName String?
   avatarSet   Boolean @default(false)
+  grade       String?
   
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   

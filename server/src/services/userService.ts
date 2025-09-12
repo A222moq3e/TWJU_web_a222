@@ -24,7 +24,7 @@ class UserService {
       data: {
         email: data.email,
         passwordHash: hashedPassword,
-        role: data.role || 'user',
+        role: data.role || 'student',
         profile: {
           create: {
             displayName: data.email.split('@')[0],
@@ -41,7 +41,7 @@ class UserService {
       id: user.id,
       email: user.email,
       role: user.role,
-      displayName: user.profile?.displayName,
+      displayName: user.profile?.displayName || undefined,
       avatarSet: user.profile?.avatarSet || false
     };
   }
@@ -71,14 +71,13 @@ class UserService {
   async getStudents() {
     return prisma.user.findMany({
       where: {
-        role: 'user'
+        role: 'student'
       },
-      select: {
-        id: true,
-        email: true,
-        profile: {
-          select: {
-            displayName: true
+      include: {
+        profile: true,
+        enrollments: {
+          include: {
+            course: true
           }
         }
       }
@@ -128,6 +127,60 @@ class UserService {
       include: { profile: true }
     });
 
+    return updated;
+  }
+
+  async updateUserProfilePartial(userId: number, data: { displayName?: string; avatarSet?: boolean }) {
+    const profileUpdate: any = {};
+    if (typeof data.displayName !== 'undefined') {
+      profileUpdate.displayName = data.displayName;
+    }
+    if (typeof data.avatarSet !== 'undefined') {
+      profileUpdate.avatarSet = data.avatarSet;
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        profile: {
+          upsert: {
+            create: profileUpdate,
+            update: profileUpdate
+          }
+        }
+      },
+      include: { profile: true }
+    });
+
+    return updated;
+  }
+
+  async setDisplayName(userId: number, displayName: string | undefined) {
+    return this.updateUserProfilePartial(userId, { displayName });
+  }
+
+  async setGrade(userId: number, grade: string | undefined) {
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        profile: {
+          upsert: ({
+            create: { grade },
+            update: { grade }
+          } as any)
+        }
+      },
+      include: { profile: true }
+    });
+    return updated;
+  }
+
+  async setEmail(userId: number, email: string) {
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: { email },
+      include: { profile: true }
+    });
     return updated;
   }
 }

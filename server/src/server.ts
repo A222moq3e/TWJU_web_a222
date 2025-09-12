@@ -5,5 +5,5 @@ const PORT = process.env.PORT || 10003;
 
 app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
-  logger.info(`Health check: http://localhost:${PORT}/health`);
+  logger.info(`Health check: http://localhost:${PORT}/api/health`);
 });
