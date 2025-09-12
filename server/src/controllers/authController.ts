@@ -138,3 +138,23 @@ export const getMyDashboard = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to get dashboard data' });
   }
 };
+
+export const updateMe = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt((req as any).user.sub);
+    const { displayName } = req.body as { displayName?: string };
+
+    const updated = await userService.updateUserProfile(userId, { displayName });
+
+    res.json({
+      id: updated.id,
+      email: updated.email,
+      role: updated.role,
+      displayName: updated.profile?.displayName,
+      avatarSet: updated.profile?.avatarSet || false
+    });
+  } catch (error) {
+    logger.error('Update me error:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+};

@@ -115,9 +115,9 @@ const StudentDashboard: React.FC = () => {
               <button className="w-full btn-primary text-sm">
                 Start New Challenge
               </button>
-              <button className="w-full btn-secondary text-sm">
-                Update Portfolio
-              </button>
+              <a href="/update" className="w-full btn-secondary text-sm inline-block text-center">
+                Update Profile
+              </a>
               <button className="w-full btn-secondary text-sm">
                 View Gallery
               </button>

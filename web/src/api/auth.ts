@@ -27,5 +27,10 @@ export const authApi = {
   getMe: async (): Promise<User> => {
     const response = await apiClient.get('/auth/me');
     return response.data;
+  },
+
+  updateMe: async (payload: { displayName?: string }): Promise<User> => {
+    const response = await apiClient.put('/auth/me', payload);
+    return response.data;
   }
 };
