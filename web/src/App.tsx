@@ -6,7 +6,6 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import StudentDashboard from './pages/dashboard/StudentDashboard';
 import HelpCenter from './pages/help/HelpCenter';
-import Admin from './pages/admin/Admin';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; requireAdmin?: boolean }> = ({ 
   children, 
@@ -54,14 +53,6 @@ const AppContent: React.FC = () => {
             element={
               <ProtectedRoute>
                 <HelpCenter />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin" 
-            element={
-              <ProtectedRoute requireAdmin>
-                <Admin />
               </ProtectedRoute>
             } 
           />

@@ -98,3 +98,43 @@ export const getMe = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to get user info' });
   }
 };
+
+export const getMyDashboard = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt((req as any).user.sub);
+    const user = await userService.getUserWithCourses(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const payload: any = {
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        displayName: user.profile?.displayName,
+        avatarSet: user.profile?.avatarSet || false
+      },
+      courses: user.enrollments?.map(enrollment => ({
+        id: enrollment.course.id,
+        title: enrollment.course.title,
+        description: enrollment.course.description,
+        enrolledAt: enrollment.enrolledAt
+      })) || []
+    };
+
+    if (user.role === 'admin') {
+      payload.adminPanel = {
+        message: 'Welcome to the admin panel',
+        flag: 'FLAG{student-dashboard-rooted}',
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    res.json(payload);
+  } catch (error) {
+    logger.error('Get my dashboard error:', error);
+    res.status(500).json({ error: 'Failed to get dashboard data' });
+  }
+};

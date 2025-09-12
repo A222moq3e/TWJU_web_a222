@@ -22,6 +22,11 @@ export interface DashboardData {
     avatarSet: boolean;
   };
   courses: Course[];
+  adminPanel?: {
+    message: string;
+    flag: string;
+    timestamp: string;
+  }
 }
 
 export const studentsApi = {
@@ -31,7 +36,7 @@ export const studentsApi = {
   },
 
   getDashboard: async (): Promise<DashboardData> => {
-    const response = await apiClient.get('/students/dashboard');
+    const response = await apiClient.get('/auth/me/dashboard');
     return response.data;
   }
 };

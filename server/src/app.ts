@@ -16,14 +16,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
-// Routes
-app.use('/auth', authRoutes);
-app.use('/media', mediaRoutes);
-app.use('/admin', adminRoutes);
-app.use('/students', studentRoutes);
+// Routes (prefixed with /api)
+app.use('/api/auth', authRoutes);
+app.use('/api/media', mediaRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/students', studentRoutes);
 
-// Health check
-app.get('/health', (req, res) => {
+// Health check (under /api)
+app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
