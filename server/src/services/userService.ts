@@ -44,6 +44,12 @@ class UserService {
       const defaultAvatarPath = path.join(process.cwd(), 'server', 'uploads', 'default-1.png');
       const userUploadsDir = path.join(process.cwd(), 'server', 'uploads', String(user.id));
       
+      logger.info(`Copying default avatar for user ${user.id}`, {
+        defaultAvatarPath,
+        userUploadsDir,
+        defaultExists: fs.existsSync(defaultAvatarPath)
+      });
+      
       // Create user's upload directory
       if (!fs.existsSync(userUploadsDir)) {
         fs.mkdirSync(userUploadsDir, { recursive: true });
@@ -53,7 +59,9 @@ class UserService {
       if (fs.existsSync(defaultAvatarPath)) {
         const userAvatarPath = path.join(userUploadsDir, 'avatar.png');
         fs.copyFileSync(defaultAvatarPath, userAvatarPath);
+        logger.info(`Successfully copied default avatar to: ${userAvatarPath}`);
       } else {
+        logger.warn(`Default avatar not found at: ${defaultAvatarPath}`);
         // If default avatar doesn't exist, set avatarSet to false
         await prisma.profile.update({
           where: { userId: user.id },
@@ -61,6 +69,7 @@ class UserService {
         });
       }
     } catch (error) {
+      logger.error('Failed to copy default avatar:', error);
       // If copying default avatar fails, set avatarSet to false
       await prisma.profile.update({
         where: { userId: user.id },
