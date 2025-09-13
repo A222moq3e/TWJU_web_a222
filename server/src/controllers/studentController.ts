@@ -24,7 +24,7 @@ export const getStudents = async (req: Request, res: Response) => {
         role: adminInfo?.role || null,
         userId: adminInfo?.id || null,
         displayName: adminInfo?.profile?.displayName || null,
-        avatarSet: userService.checkAvatarExists(adminInfo?.id || 0)
+        avatar: adminInfo?.profile?.avatar || 'default-1.png'
       }
     }));
 
@@ -50,7 +50,7 @@ export const getDashboard = async (req: Request, res: Response) => {
         email: user.email,
         role: user.role,
         displayName: user.profile?.displayName,
-        avatarSet: userService.checkAvatarExists(user.id)
+        avatar: user.profile?.avatar || 'default-1.png'
       },
       courses: user.enrollments?.map(enrollment => ({
         id: enrollment.course.id,

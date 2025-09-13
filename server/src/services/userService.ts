@@ -15,7 +15,7 @@ export interface UserResponse {
   email: string;
   role: string;
   displayName?: string;
-  avatarSet: boolean; // This will be computed by checking if avatar file exists
+  avatar: string;
 }
 
 class UserService {
@@ -36,7 +36,8 @@ class UserService {
         role: data.role || 'student',
         profile: {
           create: {
-            displayName: data.email.split('@')[0]
+            displayName: data.email.split('@')[0],
+            avatar: 'default-1.png'
           }
         }
       },
@@ -122,7 +123,7 @@ class UserService {
       email: updatedUser!.email,
       role: updatedUser!.role,
       displayName: updatedUser!.profile?.displayName || undefined,
-      avatarSet: this.checkAvatarExists(updatedUser!.id)
+      avatar: updatedUser!.profile?.avatar || 'default-1.png'
     };
   }
 
@@ -256,6 +257,22 @@ class UserService {
     const updated = await prisma.user.update({
       where: { id: userId },
       data: { email },
+      include: { profile: true }
+    });
+    return updated;
+  }
+
+  async updateAvatarName(userId: number, avatarName: string) {
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        profile: {
+          upsert: {
+            create: { avatar: avatarName },
+            update: { avatar: avatarName }
+          }
+        }
+      },
       include: { profile: true }
     });
     return updated;

@@ -94,7 +94,7 @@ export const getMe = async (req: Request, res: Response) => {
       email: user.email,
       role: user.role,
       displayName: user.profile?.displayName,
-      avatarSet: userService.checkAvatarExists(user.id)
+      avatar: user.profile?.avatar || 'default-1.png'
     });
   } catch (error) {
     logger.error('Get me error:', error);
@@ -230,11 +230,35 @@ export const updateMyAvatar = async (req: Request, res: Response) => {
       email: updated!.email,
       role: updated!.role,
       displayName: updated!.profile?.displayName,
-      avatarSet: userService.checkAvatarExists(userId)
+      avatar: updated!.profile?.avatar || 'default-1.png'
     });
   } catch (error) {
     logger.error('Update avatar error:', error);
     res.status(500).json({ error: 'Failed to update avatar' });
+  }
+};
+
+export const updateAvatarName = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt((req as any).user.sub);
+    const { avatarName } = req.body;
+
+    if (!avatarName) {
+      return res.status(400).json({ error: 'Avatar name is required' });
+    }
+
+    const updated = await userService.updateAvatarName(userId, avatarName);
+
+    res.json({
+      id: updated.id,
+      email: updated.email,
+      role: updated.role,
+      displayName: updated.profile?.displayName,
+      avatar: updated.profile?.avatar || 'default-1.png'
+    });
+  } catch (error) {
+    logger.error('Update avatar name error:', error);
+    res.status(500).json({ error: 'Failed to update avatar name' });
   }
 };
 

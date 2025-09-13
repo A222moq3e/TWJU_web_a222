@@ -28,6 +28,7 @@ model Profile {
   userId      Int     @unique
   displayName String?
   grade       String?
+  avatar      String? @default("default-1.png")
   
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
