@@ -4,14 +4,21 @@ import apiClient from '../api/client';
 interface AvatarProps {
   displayName?: string;
   className?: string;
+  avatarSet?: boolean;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ displayName, className = '' }) => {
+const Avatar: React.FC<AvatarProps> = ({ displayName, className = '', avatarSet = false }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
+    // Only fetch avatar if avatarSet is true
+    if (!avatarSet) {
+      setImageError(true);
+      return;
+    }
+
     const fetchAvatar = async () => {
       try {
         const response = await apiClient.get('/auth/me/avatar', {
@@ -33,7 +40,7 @@ const Avatar: React.FC<AvatarProps> = ({ displayName, className = '' }) => {
         URL.revokeObjectURL(imageSrc);
       }
     };
-  }, []);
+  }, [avatarSet]);
 
   const handleImageError = () => {
     setImageError(true);
