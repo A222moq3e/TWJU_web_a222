@@ -4,6 +4,8 @@ import fs from 'fs';
 import path from 'path';
 
 const prisma = new PrismaClient();
+const universityDomain = 'utwj.local';
+
 
 async function main() {
   console.log('Starting database seed...');
@@ -11,16 +13,15 @@ async function main() {
   // Create admin user
   const adminPassword = await bcrypt.hash('admin123', 12);
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@site.local' },
+    where: { email: `admin@${universityDomain}` },
     update: {},
     create: {
-      email: 'admin@site.local',
+      email: `admin@${universityDomain}`,
       passwordHash: adminPassword,
       role: 'admin',
       profile: {
         create: {
-          displayName: 'Admin User',
-          avatarSet: false
+          displayName: 'Admin User'
         }
       }
     }
@@ -29,10 +30,10 @@ async function main() {
   // Create test student users
   const studentPassword = await bcrypt.hash('student123', 12);
   const students = [
-    { email: 'john.doe@student.local', name: 'John Doe' },
-    { email: 'jane.smith@student.local', name: 'Jane Smith' },
-    { email: 'bob.wilson@student.local', name: 'Bob Wilson' },
-    { email: 'alice.brown@student.local', name: 'Alice Brown' }
+    { email: 'john.doe@stu' + universityDomain, name: 'John Doe' },
+    { email: 'jane.smith@stu' + universityDomain, name: 'Jane Smith' },
+    { email: 'bob.wilson@stu' + universityDomain, name: 'Bob Wilson' },
+    { email: 'alice.brown@stu' + universityDomain, name: 'Alice Brown' }
   ];
 
   for (const student of students) {
@@ -45,8 +46,7 @@ async function main() {
         role: 'student',
         profile: {
           create: {
-            displayName: student.name,
-            avatarSet: false
+            displayName: student.name
           }
         }
       }
@@ -122,8 +122,8 @@ async function main() {
   }
 
   console.log('Database seeded successfully!');
-  console.log('Admin user: admin@site.local / admin123');
-  console.log('Test students: john.doe@student.local / student123');
+  console.log('Admin user: admin@' + universityDomain + ' / admin123');
+  console.log('Test students: john.doe@stu' + universityDomain + ' / student123');
   console.log('Created uploads directory with sample avatar');
   console.log(`Admin user ID: ${admin.id}`);
   if (studentWithAvatar) {

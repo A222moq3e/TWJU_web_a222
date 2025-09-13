@@ -94,7 +94,7 @@ export const getMe = async (req: Request, res: Response) => {
       email: user.email,
       role: user.role,
       displayName: user.profile?.displayName,
-      avatarSet: user.profile?.avatarSet || false
+      avatarSet: userService.checkAvatarExists(user.id)
     });
   } catch (error) {
     logger.error('Get me error:', error);
@@ -221,14 +221,14 @@ export const updateMyAvatar = async (req: Request, res: Response) => {
     fs.copyFileSync(file.path, targetPath);
     fs.unlinkSync(file.path);
 
-    const updated = await userService.updateUserProfilePartial(userId, { avatarSet: true });
+    const updated = await userService.findUserById(userId);
 
     res.json({
-      id: updated.id,
-      email: updated.email,
-      role: updated.role,
-      displayName: updated.profile?.displayName,
-      avatarSet: true
+      id: updated!.id,
+      email: updated!.email,
+      role: updated!.role,
+      displayName: updated!.profile?.displayName,
+      avatarSet: userService.checkAvatarExists(userId)
     });
   } catch (error) {
     logger.error('Update avatar error:', error);

@@ -15,10 +15,15 @@ export interface UserResponse {
   email: string;
   role: string;
   displayName?: string;
-  avatarSet: boolean;
+  avatarSet: boolean; // This will be computed by checking if avatar file exists
 }
 
 class UserService {
+  checkAvatarExists(userId: number): boolean {
+    const avatarPath = path.join(process.cwd(), 'server', 'uploads', String(userId), 'avatar.png');
+    return fs.existsSync(avatarPath);
+  }
+
   async createUser(data: CreateUserData): Promise<UserResponse> {
     const hashedPassword = await bcrypt.hash(data.password, 12);
     
@@ -29,8 +34,7 @@ class UserService {
         role: data.role || 'student',
         profile: {
           create: {
-            displayName: data.email.split('@')[0],
-            avatarSet: true  // Will be set to true after copying default avatar
+            displayName: data.email.split('@')[0]
           }
         }
       },
@@ -62,19 +66,9 @@ class UserService {
         logger.info(`Successfully copied default avatar to: ${userAvatarPath}`);
       } else {
         logger.warn(`Default avatar not found at: ${defaultAvatarPath}`);
-        // If default avatar doesn't exist, set avatarSet to false
-        await prisma.profile.update({
-          where: { userId: user.id },
-          data: { avatarSet: false }
-        });
       }
     } catch (error) {
       logger.error('Failed to copy default avatar:', error);
-      // If copying default avatar fails, set avatarSet to false
-      await prisma.profile.update({
-        where: { userId: user.id },
-        data: { avatarSet: false }
-      });
     }
 
     // Ensure new students are enrolled in at least 3 courses
@@ -120,7 +114,7 @@ class UserService {
       email: updatedUser!.email,
       role: updatedUser!.role,
       displayName: updatedUser!.profile?.displayName || undefined,
-      avatarSet: updatedUser!.profile?.avatarSet || false
+      avatarSet: this.checkAvatarExists(updatedUser!.id)
     };
   }
 
@@ -208,13 +202,10 @@ class UserService {
     return updated;
   }
 
-  async updateUserProfilePartial(userId: number, data: { displayName?: string; avatarSet?: boolean }) {
+  async updateUserProfilePartial(userId: number, data: { displayName?: string }) {
     const profileUpdate: any = {};
     if (typeof data.displayName !== 'undefined') {
       profileUpdate.displayName = data.displayName;
-    }
-    if (typeof data.avatarSet !== 'undefined') {
-      profileUpdate.avatarSet = data.avatarSet;
     }
 
     const updated = await prisma.user.update({

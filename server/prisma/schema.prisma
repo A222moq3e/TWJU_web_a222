@@ -27,7 +27,6 @@ model Profile {
   id          Int     @id @default(autoincrement())
   userId      Int     @unique
   displayName String?
-  avatarSet   Boolean @default(false)
   grade       String?
   
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
