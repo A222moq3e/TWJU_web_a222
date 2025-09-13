@@ -1,3 +1,4 @@
+// server/src/app.ts
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes';
@@ -7,7 +8,7 @@ import studentRoutes from './routes/studentRoutes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { logger } from './lib/logger';
-import path from 'path';
+import path from 'path'; // <-- add this (if TS complains, use: import * as path from 'path')
 
 const app = express();
 
@@ -23,29 +24,29 @@ app.use('/api/media', mediaRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/students', studentRoutes);
 
-// Health check (under /api)
-app.get('/api/health', (req, res) => {
+// Health check
+app.get('/api/health', (_req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// ---------- Serve built SPA in production ----------
-if (process.env.NODE_ENV === 'production') {
-  // After tsc, __dirname === server/dist
-  const clientDist = path.resolve(__dirname, '..', '..', 'web', 'dist');
-  logger.info(`Serving static client from: ${clientDist}`);
+/**
+ * ---- Serve built SPA ----
+ * After tsc, __dirname === server/dist, so ../../web/dist is your client build.
+ * I’m NOT gating by NODE_ENV so it works immediately.
+ */
+const clientDist = path.resolve(__dirname, '..', '..', 'web', 'dist');
+logger.info(`Serving static client from: ${clientDist}`);
 
-  // Serve hashed assets
-  app.use(express.static(clientDist, { maxAge: '1y', immutable: true }));
+app.use(express.static(clientDist, { maxAge: '1y', immutable: true }));
 
-  // SPA fallback for non-API routes
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(clientDist, 'index.html'));
-  });
-}
-// ---------------------------------------------------
+// SPA fallback for non-API routes
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  res.sendFile(path.join(clientDist, 'index.html'));
+});
+// ---- end SPA ----
 
-// Error handling
+// Error handling (kept last)
 app.use(notFoundHandler);
 app.use(errorHandler);
 
