@@ -271,7 +271,7 @@ export const getMyAvatar = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Avatar not found' });
     }
     
-    const avatarPath = path.join(process.cwd(), 'uploads', String(userId), user.profile.avatar);
+    const avatarPath = path.join(process.cwd(), 'uploads', user.profile.avatar);
     logger.info(`Getting avatar for user ${userId}: ${avatarPath} - exists: ${fs.existsSync(avatarPath)}`);
     
     if (!fs.existsSync(avatarPath)) {
