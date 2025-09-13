@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="text-xl font-bold text-photography-900">
-              Student Dashboard
+              TWJ University
             </Link>
           </div>
           
