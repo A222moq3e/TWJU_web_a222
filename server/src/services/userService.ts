@@ -20,7 +20,7 @@ export interface UserResponse {
 
 class UserService {
   checkAvatarExists(userId: number): boolean {
-    const avatarPath = path.join(process.cwd(), 'server', 'uploads', String(userId), 'avatar.png');
+    const avatarPath = path.join(process.cwd(), 'uploads', String(userId), 'avatar.png');
     const exists = fs.existsSync(avatarPath);
     logger.info(`Checking avatar for user ${userId}: ${avatarPath} - exists: ${exists}`);
     return exists;
@@ -47,8 +47,8 @@ class UserService {
 
     // Copy default avatar for new user
     try {
-      const defaultAvatarPath = path.join(process.cwd(), 'server', 'uploads', 'default-1.png');
-      const userUploadsDir = path.join(process.cwd(), 'server', 'uploads', String(user.id));
+      const defaultAvatarPath = path.join(process.cwd(), 'uploads', 'default-1.png');
+      const userUploadsDir = path.join(process.cwd(), 'uploads', String(user.id));
 
       
       
