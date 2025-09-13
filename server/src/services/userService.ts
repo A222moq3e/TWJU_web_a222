@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs';
 import prisma from '../lib/db';
 import { logger } from '../lib/logger';
+import fs from 'fs';
+import path from 'path';
 
 export interface CreateUserData {
   email: string;
@@ -28,7 +30,7 @@ class UserService {
         profile: {
           create: {
             displayName: data.email.split('@')[0],
-            avatarSet: false
+            avatarSet: true  // Will be set to true after copying default avatar
           }
         }
       },
@@ -36,6 +38,35 @@ class UserService {
         profile: true
       }
     });
+
+    // Copy default avatar for new user
+    try {
+      const defaultAvatarPath = path.join(process.cwd(), 'server', 'uploads', 'default-1.png');
+      const userUploadsDir = path.join(process.cwd(), 'server', 'uploads', String(user.id));
+      
+      // Create user's upload directory
+      if (!fs.existsSync(userUploadsDir)) {
+        fs.mkdirSync(userUploadsDir, { recursive: true });
+      }
+      
+      // Copy default avatar if it exists
+      if (fs.existsSync(defaultAvatarPath)) {
+        const userAvatarPath = path.join(userUploadsDir, 'avatar.png');
+        fs.copyFileSync(defaultAvatarPath, userAvatarPath);
+      } else {
+        // If default avatar doesn't exist, set avatarSet to false
+        await prisma.profile.update({
+          where: { userId: user.id },
+          data: { avatarSet: false }
+        });
+      }
+    } catch (error) {
+      // If copying default avatar fails, set avatarSet to false
+      await prisma.profile.update({
+        where: { userId: user.id },
+        data: { avatarSet: false }
+      });
+    }
 
     // Ensure new students are enrolled in at least 3 courses
     try {
@@ -69,12 +100,18 @@ class UserService {
       (logger as any)?.warn?.('Enrollment during registration failed', e);
     }
 
+    // Fetch updated user data to get correct avatarSet value
+    const updatedUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: { profile: true }
+    });
+
     return {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      displayName: user.profile?.displayName || undefined,
-      avatarSet: user.profile?.avatarSet || false
+      id: updatedUser!.id,
+      email: updatedUser!.email,
+      role: updatedUser!.role,
+      displayName: updatedUser!.profile?.displayName || undefined,
+      avatarSet: updatedUser!.profile?.avatarSet || false
     };
   }
 
