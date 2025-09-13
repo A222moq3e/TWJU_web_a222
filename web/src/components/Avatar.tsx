@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 
 interface AvatarProps {
-  userId: number;
   displayName?: string;
   className?: string;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ userId, displayName, className = '' }) => {
+const Avatar: React.FC<AvatarProps> = ({ displayName, className = '' }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
 
