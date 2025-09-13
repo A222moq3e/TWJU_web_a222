@@ -5,7 +5,7 @@ export interface User {
   email: string;
   role: string;
   displayName?: string;
-  avatarSet: boolean;
+  avatar: string;
 }
 
 export interface AuthResponse {
@@ -49,10 +49,15 @@ export const authApi = {
     return response.data;
   },
 
+  updateAvatarName: async (avatarName: string): Promise<User> => {
+    const response = await apiClient.patch('/auth/me/avatar/name', { avatarName });
+    return response.data;
+  },
+
   uploadAvatar: async (file: File): Promise<User> => {
     const form = new FormData();
     form.append('avatar', file);
-    const response = await apiClient.patch('/auth/me/avatar', form, {
+    const response = await apiClient.post('/auth/me/avatar/upload', form, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;

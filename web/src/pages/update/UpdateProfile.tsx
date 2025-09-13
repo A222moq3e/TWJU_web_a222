@@ -8,7 +8,7 @@ const UpdateProfile: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [email, setEmail] = useState('');
-  const [grade, setGrade] = useState('');
+  const [grade] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -58,12 +58,23 @@ const UpdateProfile: React.FC = () => {
         setUser(updated);
       }
       if (avatarFile) {
+        // Generate unique filename
+        const timestamp = Date.now();
+        const fileExtension = avatarFile.name.split('.').pop();
+        const avatarName = `avatar-${timestamp}.${fileExtension}`;
+        
+        // Step 1: Update avatar name
+        await authApi.updateAvatarName(avatarName);
+        
+        // Step 2: Upload avatar file
         const updated = await authApi.uploadAvatar(avatarFile);
         setUser(updated);
+        
+        // Update localStorage
         const savedUser = localStorage.getItem('user');
         if (savedUser) {
           const parsed = JSON.parse(savedUser);
-          parsed.avatarSet = true;
+          parsed.avatar = avatarName;
           localStorage.setItem('user', JSON.stringify(parsed));
         }
       }
@@ -108,16 +119,6 @@ const UpdateProfile: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.edu"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-photography-700">Grade</label>
-              <input
-                type="text"
-                className="mt-1 block w-full rounded-md border-photography-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
-                value={grade}
-                onChange={(e) => setGrade(e.target.value)}
-                placeholder="e.g., Sophomore"
               />
             </div>
             <div>

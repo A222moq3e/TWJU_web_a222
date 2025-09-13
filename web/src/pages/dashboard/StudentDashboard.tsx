@@ -96,7 +96,7 @@ const StudentDashboard: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <Avatar 
                   displayName={dashboardData?.user.displayName}
-                  avatarSet={dashboardData?.user.avatarSet}
+                  avatar={dashboardData?.user.avatar}
                   className="w-16 h-16"
                 />
                 <div>

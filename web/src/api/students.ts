@@ -12,7 +12,7 @@ export interface Student {
     role: string | null;
     userId: number | null;
     displayName: string | null;
-    avatarSet: boolean;
+    avatar: string;
   };
 }
 
@@ -32,7 +32,7 @@ export interface DashboardData {
     email: string;
     role: string;
     displayName?: string;
-    avatarSet: boolean;
+    avatar: string;
   };
   courses: Course[];
   adminPanel?: {

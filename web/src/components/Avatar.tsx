@@ -4,17 +4,17 @@ import apiClient from '../api/client';
 interface AvatarProps {
   displayName?: string;
   className?: string;
-  avatarSet?: boolean;
+  avatar?: string;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ displayName, className = '', avatarSet = false }) => {
+const Avatar: React.FC<AvatarProps> = ({ displayName, className = '', avatar = 'default-1.png' }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    // Only fetch avatar if avatarSet is true
-    if (!avatarSet) {
+    // Only fetch avatar if it's not the default
+    if (avatar === 'default-1.png') {
       setImageError(true);
       return;
     }
@@ -40,7 +40,7 @@ const Avatar: React.FC<AvatarProps> = ({ displayName, className = '', avatarSet 
         URL.revokeObjectURL(imageSrc);
       }
     };
-  }, [avatarSet]);
+  }, [avatar]);
 
   const handleImageError = () => {
     setImageError(true);
