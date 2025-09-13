@@ -32,7 +32,7 @@ const Avatar: React.FC<AvatarProps> = ({ userId, displayName, className = '' }) 
     <div className={`relative ${className}`}>
       {!imageError ? (
         <img
-          src={`/api/media/file?userId=${userId}&file=avatar.png`}
+          src="/api/auth/me/avatar"
           alt={displayName || 'User avatar'}
           className={`w-full h-full rounded-full object-cover ${
             imageLoaded ? 'opacity-100' : 'opacity-0'
