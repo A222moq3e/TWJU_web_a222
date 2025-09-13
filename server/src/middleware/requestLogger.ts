@@ -23,8 +23,8 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
       contentLength: res.get('Content-Length') || 0
     });
 
-    // Call the original end method
-    originalEnd.call(this, chunk, encoding);
+    // Call the original end method and return its result
+    return originalEnd.call(this, chunk, encoding);
   };
 
   next();
