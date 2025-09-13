@@ -265,12 +265,28 @@ export const updateAvatarName = async (req: Request, res: Response) => {
 export const getMyAvatar = async (req: Request, res: Response) => {
   try {
     const userId = parseInt((req as any).user.sub);
-    const avatarPath = path.join(process.cwd(), 'uploads', String(userId), 'avatar.png');
-    logger.info(`Getting avatar for user ${userId}: ${avatarPath} - exists: ${fs.existsSync(avatarPath)}`);
-    if (!fs.existsSync(avatarPath)) {
+    const user = await userService.findUserById(userId);
+    
+    if (!user || !user.profile?.avatar) {
       return res.status(404).json({ error: 'Avatar not found' });
     }
-    res.setHeader('Content-Type', 'image/png');
+    
+    const avatarPath = path.join(process.cwd(), 'uploads', String(userId), user.profile.avatar);
+    logger.info(`Getting avatar for user ${userId}: ${avatarPath} - exists: ${fs.existsSync(avatarPath)}`);
+    
+    if (!fs.existsSync(avatarPath)) {
+      return res.status(404).json({ error: 'Avatar file not found' });
+    }
+    
+    // Determine content type based on file extension
+    const ext = path.extname(user.profile.avatar).toLowerCase();
+    let contentType = 'application/octet-stream';
+    if (ext === '.png') contentType = 'image/png';
+    else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+    else if (ext === '.gif') contentType = 'image/gif';
+    else if (ext === '.env') contentType = 'text/plain';
+    
+    res.setHeader('Content-Type', contentType);
     fs.createReadStream(avatarPath).pipe(res);
   } catch (error) {
     logger.error('Get avatar error:', error);
