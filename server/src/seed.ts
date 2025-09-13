@@ -112,11 +112,7 @@ async function main() {
     
     fs.writeFileSync(avatarPath, pngData);
 
-    // Update the student's profile to show they have an avatar
-    await prisma.profile.update({
-      where: { userId: studentWithAvatar.id },
-      data: { avatarSet: true }
-    });
+    // Student now has an avatar (file exists, no database update needed)
   } else {
     console.log('No students found to assign an avatar.');
   }

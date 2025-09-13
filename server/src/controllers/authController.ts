@@ -70,7 +70,7 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         role: user.role,
         displayName: user.profile?.displayName,
-        avatarSet: user.profile?.avatarSet || false
+        avatarSet: userService.checkAvatarExists(user.id)
       },
       token
     });
@@ -117,7 +117,7 @@ export const getMyDashboard = async (req: Request, res: Response) => {
         email: user.email,
         role: user.role,
         displayName: user.profile?.displayName,
-        avatarSet: user.profile?.avatarSet || false
+        avatarSet: userService.checkAvatarExists(user.id)
       },
       courses: user.enrollments?.map(enrollment => ({
         id: enrollment.course.id,
@@ -152,7 +152,7 @@ export const updateMyName = async (req: Request, res: Response) => {
       email: updated.email,
       role: updated.role,
       displayName: updated.profile?.displayName,
-      avatarSet: updated.profile?.avatarSet || false,
+      avatarSet: userService.checkAvatarExists(userId),
       grade: (updated as any).profile?.grade
     });
   } catch (error) {
@@ -172,7 +172,7 @@ export const updateMyEmail = async (req: Request, res: Response) => {
       email: updated.email,
       role: updated.role,
       displayName: updated.profile?.displayName,
-      avatarSet: updated.profile?.avatarSet || false,
+      avatarSet: userService.checkAvatarExists(userId),
       grade: (updated as any).profile?.grade
     });
   } catch (error) {
@@ -191,7 +191,7 @@ export const updateMyGrade = async (req: Request, res: Response) => {
       email: updated.email,
       role: updated.role,
       displayName: updated.profile?.displayName,
-      avatarSet: updated.profile?.avatarSet || false,
+      avatarSet: userService.checkAvatarExists(userId),
       grade: (updated as any).profile?.grade
     });
   } catch (error) {
