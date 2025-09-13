@@ -7,6 +7,7 @@ import studentRoutes from './routes/studentRoutes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 import { logger } from './lib/logger';
+import path from 'path';
 
 const app = express();
 
@@ -26,6 +27,23 @@ app.use('/api/students', studentRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
+
+// ---------- Serve built SPA in production ----------
+if (process.env.NODE_ENV === 'production') {
+  // After tsc, __dirname === server/dist
+  const clientDist = path.resolve(__dirname, '..', '..', 'web', 'dist');
+  logger.info(`Serving static client from: ${clientDist}`);
+
+  // Serve hashed assets
+  app.use(express.static(clientDist, { maxAge: '1y', immutable: true }));
+
+  // SPA fallback for non-API routes
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
+// ---------------------------------------------------
 
 // Error handling
 app.use(notFoundHandler);
