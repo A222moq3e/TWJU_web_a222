@@ -94,8 +94,7 @@ const StudentDashboard: React.FC = () => {
             {/* Profile */}
             <Card title="Profile">
               <div className="flex items-center space-x-4">
-                <Avatar
-                  userId={dashboardData?.user.id || 0}
+                <Avatar 
                   displayName={dashboardData?.user.displayName}
                   className="w-16 h-16"
                 />
