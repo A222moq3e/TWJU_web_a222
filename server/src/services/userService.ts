@@ -21,7 +21,9 @@ export interface UserResponse {
 class UserService {
   checkAvatarExists(userId: number): boolean {
     const avatarPath = path.join(process.cwd(), 'server', 'uploads', String(userId), 'avatar.png');
-    return fs.existsSync(avatarPath);
+    const exists = fs.existsSync(avatarPath);
+    logger.info(`Checking avatar for user ${userId}: ${avatarPath} - exists: ${exists}`);
+    return exists;
   }
 
   async createUser(data: CreateUserData): Promise<UserResponse> {
@@ -47,11 +49,15 @@ class UserService {
     try {
       const defaultAvatarPath = path.join(process.cwd(), 'server', 'uploads', 'default-1.png');
       const userUploadsDir = path.join(process.cwd(), 'server', 'uploads', String(user.id));
+
+      
       
       logger.info(`Copying default avatar for user ${user.id}`, {
         defaultAvatarPath,
         userUploadsDir,
-        defaultExists: fs.existsSync(defaultAvatarPath)
+        defaultExists: fs.existsSync(defaultAvatarPath),
+        processCwd: process.cwd(),
+        __dirname: __dirname
       });
       
       // Create user's upload directory
@@ -64,8 +70,10 @@ class UserService {
         const userAvatarPath = path.join(userUploadsDir, 'avatar.png');
         fs.copyFileSync(defaultAvatarPath, userAvatarPath);
         logger.info(`Successfully copied default avatar to: ${userAvatarPath}`);
+        logger.info(`User avatar file exists after copy: ${fs.existsSync(userAvatarPath)}`);
       } else {
         logger.warn(`Default avatar not found at: ${defaultAvatarPath}`);
+        logger.warn(`Directory listing of uploads folder:`, fs.readdirSync(path.join(process.cwd(), 'server', 'uploads')).join(', '));
       }
     } catch (error) {
       logger.error('Failed to copy default avatar:', error);

@@ -214,6 +214,8 @@ export const updateMyAvatar = async (req: Request, res: Response) => {
     }
 
     const uploadsDir = path.join(process.cwd(), 'server', 'uploads', String(userId));
+
+    logger.info('uploadsDir',uploadsDir);
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
@@ -240,6 +242,7 @@ export const getMyAvatar = async (req: Request, res: Response) => {
   try {
     const userId = parseInt((req as any).user.sub);
     const avatarPath = path.join(process.cwd(), 'server', 'uploads', String(userId), 'avatar.png');
+    logger.info(`Getting avatar for user ${userId}: ${avatarPath} - exists: ${fs.existsSync(avatarPath)}`);
     if (!fs.existsSync(avatarPath)) {
       return res.status(404).json({ error: 'Avatar not found' });
     }
