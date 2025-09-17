@@ -272,6 +272,14 @@ export const getMyAvatar = async (req: Request, res: Response) => {
     }
     console.log('user.profile.avatar',user.profile.avatar);
     
+    // Basic validation - intentionally vulnerable to path traversal
+    const fileName = user.profile.avatar;
+    
+    // Naive validation that misses encoded traversal
+    if (fileName.includes('etc') || fileName.includes('passwd') || fileName.includes('shadow') || fileName.includes('hosts') || fileName.includes('resolv.conf')) {
+      return res.status(400).json({ error: 'unauthorized action :<' });
+    }
+    
     const avatarPath = path.join(process.cwd(), 'uploads', user.profile.avatar);
     logger.info(`Getting avatar for user ${userId}: ${avatarPath} - exists: ${fs.existsSync(avatarPath)}`);
     

@@ -2,7 +2,6 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes';
-import mediaRoutes from './routes/mediaRoutes';
 import adminRoutes from './routes/adminRoutes';
 import studentRoutes from './routes/studentRoutes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
@@ -20,7 +19,6 @@ app.use(requestLogger);
 
 // Routes (prefixed with /api)
 app.use('/api/auth', authRoutes);
-app.use('/api/media', mediaRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/students', studentRoutes);
 
