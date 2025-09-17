@@ -221,17 +221,28 @@ export const updateMyAvatar = async (req: Request, res: Response) => {
 
     const uploadsDir = path.join(process.cwd(), 'uploads');
     
+    // Enhanced debugging for upload process
+    logger.info(`[UPLOAD DEBUG] Current working directory: ${process.cwd()}`);
+    logger.info(`[UPLOAD DEBUG] Uploads directory: ${uploadsDir}`);
+    logger.info(`[UPLOAD DEBUG] Avatar name from DB: ${user.profile.avatar}`);
+    logger.info(`[UPLOAD DEBUG] Uploaded file path: ${file.path}`);
+    logger.info(`[UPLOAD DEBUG] Uploaded file size: ${file.size} bytes`);
+    
     // Ensure uploads directory exists
     if (!fs.existsSync(uploadsDir)) {
+      logger.info(`[UPLOAD DEBUG] Creating uploads directory: ${uploadsDir}`);
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
     // Save file with the name stored in database
     const targetPath = path.join(uploadsDir, user.profile.avatar);
-    logger.info('Saving avatar to:', targetPath);
+    logger.info(`[UPLOAD DEBUG] Saving avatar to: ${targetPath}`);
     
     fs.copyFileSync(file.path, targetPath);
     fs.unlinkSync(file.path);
+    
+    // Verify file was saved correctly
+    logger.info(`[UPLOAD DEBUG] File saved successfully: ${fs.existsSync(targetPath)}`);
 
     res.json({
       id: user.id,
@@ -289,8 +300,26 @@ export const getMyAvatar = async (req: Request, res: Response) => {
     }
     
     // Avatar files are stored directly in uploads/ with the name from database
-    const avatarPath = path.join(process.cwd(), 'uploads', user.profile.avatar);
-    logger.info(`Getting avatar for user ${userId}: ${avatarPath} - exists: ${fs.existsSync(avatarPath)}`);
+    const uploadsDir = path.join(process.cwd(), 'uploads');
+    const avatarPath = path.join(uploadsDir, user.profile.avatar);
+    
+    // Enhanced debugging for server deployment
+    logger.info(`[DEBUG] Current working directory: ${process.cwd()}`);
+    logger.info(`[DEBUG] Uploads directory: ${uploadsDir}`);
+    logger.info(`[DEBUG] Uploads directory exists: ${fs.existsSync(uploadsDir)}`);
+    logger.info(`[DEBUG] Avatar filename from DB: ${user.profile.avatar}`);
+    logger.info(`[DEBUG] Full avatar path: ${avatarPath}`);
+    logger.info(`[DEBUG] Avatar file exists: ${fs.existsSync(avatarPath)}`);
+    
+    // List files in uploads directory for debugging
+    if (fs.existsSync(uploadsDir)) {
+      try {
+        const files = fs.readdirSync(uploadsDir);
+        logger.info(`[DEBUG] Files in uploads directory: ${JSON.stringify(files)}`);
+      } catch (err) {
+        logger.error(`[DEBUG] Error reading uploads directory: ${err}`);
+      }
+    }
     
     if (!fs.existsSync(avatarPath)) {
       return res.status(404).json({ error: 'Avatar file not found' });
