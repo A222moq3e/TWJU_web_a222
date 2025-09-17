@@ -13,11 +13,18 @@ const Avatar: React.FC<AvatarProps> = ({ displayName, className = '', avatar = '
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log('[Avatar Debug] Avatar prop value:', avatar);
+    console.log('[Avatar Debug] Avatar type:', typeof avatar);
+    console.log('[Avatar Debug] Is default?', avatar === 'default-1.png');
+    
     // Only fetch avatar if it's not the default
     if (avatar === 'default-1.png') {
+      console.log('[Avatar Debug] Using default avatar, not making API call');
       setImageError(true);
       return;
     }
+
+    console.log('[Avatar Debug] Making API call for avatar:', avatar);
 
     const fetchAvatar = async () => {
       try {
