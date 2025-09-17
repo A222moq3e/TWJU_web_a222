@@ -48,7 +48,7 @@ const HelpCenter: React.FC = () => {
               <div className="text-gray-700">
                 <p>If you need assistance, reach out:</p>
                 <ul className="mt-2 space-y-1">
-                  <li>Email: support@university.edu</li>
+                  <li>Email: support@utwj.local</li>
                   <li>Phone: (555) 123-4567</li>
                   <li>Hours: Sun–Thu, 7:00 AM – 3:00 PM</li>
                 </ul>

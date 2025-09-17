@@ -72,7 +72,7 @@ const Register: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input mt-1"
-                placeholder="your.art@vulnerability.edu"
+                placeholder="your.name@utwj.local"
               />
             </div>
 

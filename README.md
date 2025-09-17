@@ -74,8 +74,8 @@ This will start both the backend server (port 10003) and frontend development se
 
 After seeding the database, you can use these test accounts:
 
-- **Mentor**: admin@site.local / admin123
-- **Photographer**: john.doe@student.local / student123
+- **Mentor**: admin@utwj.local / admin123
+- **Photographer**: john.doe@stuutwj.local / student123
 
 ## API Endpoints
 
