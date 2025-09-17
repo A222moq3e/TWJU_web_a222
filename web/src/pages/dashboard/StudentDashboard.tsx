@@ -146,9 +146,9 @@ const StudentDashboard: React.FC = () => {
             {/* Quick actions */}
             <Card title="Quick Actions">
               <div className="space-y-3">
-                <button className="w-full btn-primary text-sm">Browse Courses</button>
+                <button className="w-full btn-primary text-sm" onClick={() => alert('Under Development')}>Browse Courses</button>
                 <a href="/update" className="w-full btn-secondary text-sm inline-block text-center">Update Profile</a>
-                <button className="w-full btn-secondary text-sm">View Transcript</button>
+                <button className="w-full btn-secondary text-sm" onClick={() => alert('Under Development')}>View Transcript</button>
               </div>
             </Card>
 
