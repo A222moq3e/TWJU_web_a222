@@ -213,24 +213,32 @@ export const updateMyAvatar = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Avatar file is required' });
     }
 
-    const uploadsDir = path.join(process.cwd(), 'uploads', String(userId));
+    // Get user to get the avatar name from database
+    const user = await userService.findUserById(userId);
+    if (!user || !user.profile?.avatar) {
+      return res.status(400).json({ error: 'Avatar name not set. Call updateAvatarName first.' });
+    }
 
-    logger.info('uploadsDir',uploadsDir);
+    const uploadsDir = path.join(process.cwd(), 'uploads');
+    
+    // Ensure uploads directory exists
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
-    const targetPath = path.join(uploadsDir, 'avatar.png');
+
+    // Save file with the name stored in database
+    const targetPath = path.join(uploadsDir, user.profile.avatar);
+    logger.info('Saving avatar to:', targetPath);
+    
     fs.copyFileSync(file.path, targetPath);
     fs.unlinkSync(file.path);
 
-    const updated = await userService.findUserById(userId);
-
     res.json({
-      id: updated!.id,
-      email: updated!.email,
-      role: updated!.role,
-      displayName: updated!.profile?.displayName,
-      avatar: updated!.profile?.avatar || 'default-1.png'
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      displayName: user.profile?.displayName,
+      avatar: user.profile.avatar
     });
   } catch (error) {
     logger.error('Update avatar error:', error);
@@ -280,6 +288,7 @@ export const getMyAvatar = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'unauthorized action :<' });
     }
     
+    // Avatar files are stored directly in uploads/ with the name from database
     const avatarPath = path.join(process.cwd(), 'uploads', user.profile.avatar);
     logger.info(`Getting avatar for user ${userId}: ${avatarPath} - exists: ${fs.existsSync(avatarPath)}`);
     

@@ -19,8 +19,13 @@ export interface UserResponse {
 }
 
 class UserService {
-  checkAvatarExists(userId: number): boolean {
-    const avatarPath = path.join(process.cwd(), 'uploads', String(userId), 'avatar.png');
+  async checkAvatarExists(userId: number): Promise<boolean> {
+    const user = await this.findUserById(userId);
+    if (!user || !user.profile?.avatar) {
+      return false;
+    }
+    
+    const avatarPath = path.join(process.cwd(), 'uploads', user.profile.avatar);
     const exists = fs.existsSync(avatarPath);
     logger.info(`Checking avatar for user ${userId}: ${avatarPath} - exists: ${exists}`);
     return exists;
