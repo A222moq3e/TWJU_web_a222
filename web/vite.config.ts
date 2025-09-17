@@ -64,7 +64,7 @@ export default defineConfig(({ command }) => {
       },
       terserOptions: {
         compress: {
-          drop_console: true,
+          drop_console: false,  // Temporarily keep console.log for debugging
           drop_debugger: true
         },
         format: {
