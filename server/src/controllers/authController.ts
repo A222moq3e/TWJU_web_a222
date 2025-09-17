@@ -322,6 +322,7 @@ export const getMyAvatar = async (req: Request, res: Response) => {
     }
     
     if (!fs.existsSync(avatarPath)) {
+      logger.info(`[DEBUG] Avatar file not found: ${avatarPath}`);
       return res.status(404).json({ error: 'Avatar file not found' });
     }
     

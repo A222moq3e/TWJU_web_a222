@@ -17,15 +17,6 @@ const Avatar: React.FC<AvatarProps> = ({ displayName, className = '', avatar = '
     console.log('[Avatar Debug] Avatar type:', typeof avatar);
     console.log('[Avatar Debug] Is default?', avatar === 'default-1.png');
     
-    // Only fetch avatar if it's not the default
-    if (avatar === 'default-1.png') {
-      console.log('[Avatar Debug] Using default avatar, not making API call');
-      setImageError(true);
-      return;
-    }
-
-    console.log('[Avatar Debug] Making API call for avatar:', avatar);
-
     const fetchAvatar = async () => {
       try {
         const response = await apiClient.get('/auth/me/avatar', {
@@ -34,11 +25,16 @@ const Avatar: React.FC<AvatarProps> = ({ displayName, className = '', avatar = '
         const blob = new Blob([response.data], { type: 'image/png' });
         const url = URL.createObjectURL(blob);
         setImageSrc(url);
+        setImageError(false);
+        console.log('[Avatar Debug] Successfully loaded avatar image');
       } catch (error) {
+        console.log('[Avatar Debug] Failed to load avatar, showing initials fallback');
         setImageError(true);
       }
     };
 
+    // Always try to fetch the avatar (including default-1.png)
+    console.log('[Avatar Debug] Making API call for avatar:', avatar);
     fetchAvatar();
 
     // Cleanup function to revoke object URL
