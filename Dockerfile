@@ -56,6 +56,10 @@ WORKDIR /app/server
 RUN npx prisma generate
 WORKDIR /app
 
+# Copy startup script
+COPY startup.sh /app/startup.sh
+RUN chmod +x /app/startup.sh
+
 # Copy environment file template
 COPY ops/sample-etc-dot-env .env
 
@@ -72,5 +76,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
 
-# Start the application
-CMD ["node", "server/dist/server.js"]
+# Start the application with startup script
+CMD ["/app/startup.sh"]
