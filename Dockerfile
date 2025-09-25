@@ -1,14 +1,7 @@
 # Multi-stage build for Student Dashboard CTF
-FROM node:18-alpine AS base
+FROM node:18-bullseye-slim AS base
 
-# Install dependencies only when needed
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-
-# Install root dependencies
-COPY package*.json ./
-RUN npm ci --only=production
+## (deps stage removed; not needed on Debian base)
 
 # Install server dependencies
 FROM base AS server-deps
@@ -43,7 +36,9 @@ FROM base AS runner
 WORKDIR /app
 
 # Install PostgreSQL client for database operations
-RUN apk add --no-cache postgresql-client
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
