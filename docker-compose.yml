@@ -35,7 +35,7 @@ services:
     volumes:
       - student-uploads:/app/uploads
     restart: unless-stopped
-    command: sh -c "echo '⏳ Waiting for database...' && sleep 10 && echo '🚀 Initializing database...' && cd /app/server && npx prisma migrate deploy && npx prisma db seed && echo '✅ Database initialized! Starting app...' && cd /app && node server/dist/server.js"
+    command: sh -c "echo '⏳ Waiting for database...' && sleep 10 && echo '🚀 Initializing database...' && cd /app/server && npx prisma migrate deploy && node dist/seed.js && echo '✅ Database initialized! Starting app...' && cd /app && node server/dist/server.js"
     healthcheck:
       test:
         [
