@@ -4,26 +4,14 @@ This guide explains how to build and deploy the Student Dashboard CTF using Dock
 
 ## Quick Start
 
-### Using Docker Compose (Recommended)
+### Docker Run (No shell scripts)
 
-1. **Build and start all services:**
+1. **Build the application image:**
    ```bash
-   docker-compose up -d
+   docker build -t student-dashboard-ctf:latest .
    ```
 
-2. **Initialize the database:**
-   ```bash
-   docker-compose exec app npx prisma migrate deploy
-   docker-compose exec app npx prisma db seed
-   ```
-
-3. **Access the application:**
-   - Web interface: http://localhost:3000
-   - API: http://localhost:3000/api
-
-### Using Docker Only
-
-1. **Start PostgreSQL:**
+2. **Start PostgreSQL:**
    ```bash
    docker run -d --name postgres \
      -e POSTGRES_DB=student_dashboard_ctf \
@@ -33,19 +21,40 @@ This guide explains how to build and deploy the Student Dashboard CTF using Dock
      postgres:15-alpine
    ```
 
-2. **Build the application:**
-   ```bash
-   docker build -t student-dashboard-ctf .
-   ```
-
-3. **Run the application:**
+3. **Run the application (Windows/macOS Docker Desktop):**
    ```bash
    docker run -d --name student-dashboard \
-     -p 3000:3000 \
+     -p 10009:3000 \
+     -e NODE_ENV=production \
      -e DATABASE_URL=postgresql://postgres:password@host.docker.internal:5432/student_dashboard_ctf \
-     -e JWT_SECRET=supersecret_admin_signing_key \
-     student-dashboard-ctf
+     -e JWT_SECRET=supersecret_jwt_signing_key_ \
+     -v "$(pwd)/uploads:/app/uploads" \
+     student-dashboard-ctf:latest
    ```
+
+4. **Run the application (Linux using a user-defined network):**
+   ```bash
+   docker network create sd-net || true
+   docker network connect sd-net postgres || true
+   docker run -d --name student-dashboard \
+     --network sd-net \
+     -p 3000:3000 \
+     -e NODE_ENV=production \
+     -e DATABASE_URL=postgresql://postgres:password@postgres:5432/student_dashboard_ctf \
+     -e JWT_SECRET=supersecret_jwt_signing_key_ \
+     -v "$(pwd)/uploads:/app/uploads" \
+     student-dashboard-ctf:latest
+   ```
+
+5. **Initialize the database:**
+   ```bash
+   docker exec student-dashboard npx prisma migrate deploy
+   docker exec student-dashboard npx prisma db seed
+   ```
+
+6. **Access the application:**
+   - Web interface: http://localhost:3000
+   - API: http://localhost:3000/api
 
 ## Environment Variables
 
@@ -65,16 +74,16 @@ The application uses PostgreSQL with Prisma ORM. The database schema is automati
 
 ```bash
 # Run migrations
-docker-compose exec app npx prisma migrate deploy
+docker exec student-dashboard npx prisma migrate deploy
 
 # Seed the database
-docker-compose exec app npx prisma db seed
+docker exec student-dashboard npx prisma db seed
 
 # Reset the database
-docker-compose exec app npx prisma migrate reset
+docker exec student-dashboard npx prisma migrate reset
 
 # View database
-docker-compose exec app npx prisma studio
+docker exec student-dashboard npx prisma studio
 ```
 
 ## File Uploads
@@ -109,26 +118,26 @@ The application includes health checks to monitor service status:
 
 ```bash
 # View application logs
-docker-compose logs -f app
+docker logs -f student-dashboard
 
 # View database logs
-docker-compose logs -f postgres
+docker logs -f postgres
 
 # View all logs
-docker-compose logs -f
+docker logs -f student-dashboard postgres
 ```
 
 ### Debugging
 
 ```bash
 # Access container shell
-docker-compose exec app sh
+docker exec -it student-dashboard sh
 
 # Check database connection
-docker-compose exec app npx prisma db pull
+docker exec student-dashboard npx prisma db pull
 
 # View environment variables
-docker-compose exec app env
+docker exec student-dashboard env
 ```
 
 ## Security Considerations
