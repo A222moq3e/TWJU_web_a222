@@ -4,20 +4,15 @@ This guide explains how to build and deploy the Student Dashboard CTF using Dock
 
 ## Quick Start
 
-1. **Build and start all services:**
+1. **Build and start all services (database setup is automatic):**
    ```bash
    docker-compose up -d
    ```
 
-2. **Initialize the database:**
-   ```bash
-   docker-compose exec app npx prisma migrate deploy
-   docker-compose exec app npx prisma db seed
-   ```
-
-3. **Access the application:**
+2. **Access the application:**
    - Web interface: http://localhost:10009
    - API: http://localhost:10009/api
+   - Database: localhost:5433 (if you need direct access)
 
 ## Environment Variables
 
