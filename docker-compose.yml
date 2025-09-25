@@ -19,26 +19,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # Database Initialization
-  db-init:
-    build: .
-    container_name: student-dashboard-db-init
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/student_dashboard_ctf
-    depends_on:
-      postgres:
-        condition: service_healthy
-    command: >
-      sh -c "
-        echo '🚀 Initializing database...' &&
-        cd /app/server &&
-        npx prisma migrate deploy &&
-        npx prisma db seed &&
-        echo '✅ Database initialized successfully!'
-      "
-    restart: "no"
-
   # Student Dashboard Application
   app:
     build: .
@@ -50,11 +30,12 @@ services:
       - DATABASE_URL=postgresql://postgres:password@postgres:5432/student_dashboard_ctf
       - JWT_SECRET=supersecret_jwt_signing_key_
     depends_on:
-      db-init:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
     volumes:
       - student-uploads:/app/uploads
     restart: unless-stopped
+    command: sh -c "echo '⏳ Waiting for database...' && sleep 10 && echo '🚀 Initializing database...' && cd /app/server && npx prisma migrate deploy && npx prisma db seed && echo '✅ Database initialized! Starting app...' && cd /app && node server/dist/server.js"
     healthcheck:
       test:
         [
