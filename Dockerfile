@@ -56,6 +56,9 @@ COPY --from=server-builder --chown=nextjs:nodejs /app/server/node_modules ./serv
 COPY --from=server-builder --chown=nextjs:nodejs /app/server/package*.json ./server/
 COPY --from=server-builder --chown=nextjs:nodejs /app/server/prisma ./server/prisma
 
+# Generate Prisma Client for linux-musl inside the final image
+RUN npx prisma generate --schema ./server/prisma/schema.prisma
+
 # Copy environment file template
 COPY ops/sample-etc-dot-env .env
 
