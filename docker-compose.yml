@@ -24,7 +24,7 @@ services:
     build: .
     container_name: student-dashboard-app
     ports:
-      - "10009:3000"
+      - "10009:10003"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:password@postgres:5432/student_dashboard_ctf
