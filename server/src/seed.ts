@@ -90,21 +90,12 @@ async function main() {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
 
-  // Find a student to give an avatar
-  const studentWithAvatar = allStudents[0];
-  if (studentWithAvatar) {
-    const studentUploadDir = path.join(uploadsDir, studentWithAvatar.id.toString());
+  // Create student upload directories (avatars should already exist from Docker copy)
+  for (const student of allStudents) {
+    const studentUploadDir = path.join(uploadsDir, student.id.toString());
     if (!fs.existsSync(studentUploadDir)) {
       fs.mkdirSync(studentUploadDir, { recursive: true });
     }
-
-    // Create a simple avatar file (1x1 PNG)
-    const avatarPath = path.join(studentUploadDir, 'avatar.png');
-    fs.writeFileSync(avatarPath, pngData);
-
-    // Student now has an avatar (file exists, no database update needed)
-  } else {
-    console.log('No students found to assign an avatar.');
   }
 
   console.log('Database seeded successfully!');
@@ -112,9 +103,7 @@ async function main() {
   console.log('Test students: john.doe@stu' + universityDomain + ' / student123');
   console.log('Created uploads directory with sample avatar');
   console.log(`Admin user ID: ${admin.id}`);
-  if (studentWithAvatar) {
-    console.log(`Student with avatar ID: ${studentWithAvatar.id}`);
-  }
+
 }
 
 main()
