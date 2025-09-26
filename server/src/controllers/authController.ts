@@ -4,6 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { tokenService } from '../services/tokenService';
+import FlagService from '../services/flagService';
 import { logger } from '../lib/logger';
 
 export const register = async (req: Request, res: Response) => {
@@ -106,7 +107,7 @@ export const getMe = async (req: Request, res: Response) => {
     if (user.role === 'admin') {
       payload.adminPanel = {
         message: 'Welcome to the admin panel',
-        flag: 'FLAG{student-dashboard-rooted}',
+        flag: FlagService.getFlag(),
         timestamp: new Date().toISOString()
       };
     }
@@ -146,7 +147,7 @@ export const getMyDashboard = async (req: Request, res: Response) => {
     if (user.role === 'admin') {
       payload.adminPanel = {
         message: 'Welcome to the admin panel',
-        flag: 'FLAG{student-dashboard-rooted}',
+        flag: FlagService.getFlag(),
         timestamp: new Date().toISOString()
       };
     }

@@ -83,7 +83,14 @@ This application contains a JWT security vulnerability. The challenge involves:
 
 1. **Finding the JWT Secret**: Discover the JWT signing secret from environment variables
 2. **Token Manipulation**: Create a JWT token with admin privileges
-3. **Privilege Escalation**: Access the admin panel to retrieve the flag
+3. **Privilege Escalation**: Access the admin panel to retrieve the dynamic flag
+
+### Dynamic Flag
+
+The flag is generated dynamically on each application startup:
+- **Format**: `FLAG{32-character-hex-string}`
+- **Example**: `FLAG{}`
+- **Generation**: Random 16 bytes converted to 32-character hexadecimal string
 
 ### JWT Structure
 
