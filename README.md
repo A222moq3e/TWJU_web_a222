@@ -1,21 +1,40 @@
 # Student Dashboard CTF
 
-A photography education platform built with React and Express.js that connects vulnerability with creative challenges. This platform helps photographers embrace vulnerability through artistic expression and growth.
+A student dashboard application built with React and Express.js that demonstrates JWT security vulnerabilities. This CTF challenge teaches about JWT token manipulation and database privilege escalation.
 
 ## Tech Stack
 
 - **Frontend**: React + TypeScript + Tailwind CSS
 - **Backend**: Express.js + TypeScript
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: SQLite with Prisma ORM
 - **Authentication**: JWT (HS256)
+- **Deployment**: Docker + Docker Compose
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
-- PostgreSQL (v12 or higher)
-- npm or yarn
+- Docker and Docker Compose
+- OR Node.js (v18 or higher) + npm for local development
 
-## Setup Instructions
+## Quick Start with Docker
+
+### 1. Build and Run
+
+```bash
+# Build the Docker image
+docker-compose build
+
+# Start the application
+docker-compose up -d
+```
+
+### 2. Access the Application
+
+- **Web Interface**: http://localhost:10009
+- **API**: http://localhost:10009/api
+
+The database is automatically initialized with sample data when the container starts.
+
+## Local Development Setup
 
 ### 1. Install Dependencies
 
@@ -23,75 +42,91 @@ A photography education platform built with React and Express.js that connects v
 npm run setup
 ```
 
-### 2. Database Setup
+### 2. Environment Configuration
 
-Create a PostgreSQL database:
-
-```sql
-CREATE DATABASE vulnerability_university_ctf;
-```
-
-Create a `server/.env` file with your database URL and JWT secret:
+Create a `.env` file in the root directory:
 
 ```env
-DATABASE_URL="postgresql://username:password@localhost:5432/vulnerability_university_ctf"
 JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
+DATABASE_URL="file:./dev.db"
+API_URL="http://localhost:10003"
+VITE_API_URL="http://localhost:10003"
 ```
 
-### 3. Environment Configuration
+### 3. Database Setup
 
-The application reads the JWT secret from the `JWT_SECRET` environment variable in `server/.env`. 
-
-**For CTF Challenge**: The LFI vulnerability targets the `.env` file itself, which contains the JWT secret and database configuration. This vulnerability represents the challenge of exposing one's creative process and artistic vulnerabilities.
-
-### 4. Database Migration and Seeding
+The application uses SQLite with automatic database initialization:
 
 ```bash
 npm run db:push
 npm run db:seed
 ```
 
-### 5. Create Uploads Directory
-
-The uploads directory will be created automatically when you run the seed script. It will contain:
-- Sample portfolio images for photographers
-- The LFI vulnerability targets the `.env` file in the server directory, representing the exposure of creative vulnerabilities
-
-### 6. Start the Application
+### 4. Start Development Servers
 
 ```bash
 npm run dev
 ```
 
-This will start both the backend server (port 10003) and frontend development server (port 10002).
-
-## Access the Application
-
-- Frontend: http://localhost:10002
-- Backend API: http://localhost:10003
+This starts the backend server (port 10003) and frontend development server (port 10002).
 
 ## Test Accounts
 
 After seeding the database, you can use these test accounts:
 
-- **Mentor**: admin@utwj.local / admin123
-- **Photographer**: john.doe@stuutwj.local / student123
+- **Admin**: admin@utwj.local / admin123_jR1a1nXd%0a222
+- **Student**: john.doe@stuutwj.local / student123
+
+## CTF Challenge
+
+This application contains a JWT security vulnerability. The challenge involves:
+
+1. **Finding the JWT Secret**: Discover the JWT signing secret from environment variables
+2. **Token Manipulation**: Create a JWT token with admin privileges
+3. **Privilege Escalation**: Access the admin panel to retrieve the flag
+
+### JWT Structure
+
+The JWT tokens contain only:
+```json
+{
+  "id": "1",
+  "iat": 1758901530,
+  "exp": 1758987930
+}
+```
+
+**Note**: Role information is stored in the database, not in the JWT token.
 
 ## API Endpoints
 
-- `POST /auth/register` - Artist registration
-- `POST /auth/login` - Studio access
-- `GET /auth/me` - Get current artist info
-- `GET /students/` - Get list of photographers
-- `GET /students/dashboard` - Get studio dashboard data
-- `GET /media/file` - Portfolio file access endpoint
-- `GET /admin/` - Mentor panel (requires admin role)
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User authentication
+- `GET /auth/me` - Get current user info (includes admin panel if admin)
+- `GET /students/` - Get list of students
+- `GET /admin/` - Admin panel (requires admin role)
+
+## Docker Commands
+
+```bash
+# Build and start
+docker-compose up -d
+
+# View logs
+docker-compose logs -f app
+
+# Stop application
+docker-compose down
+
+# Rebuild without cache
+docker-compose build --no-cache
+```
 
 ## Development
 
 - Backend only: `npm run server`
 - Frontend only: `npm run web`
-- Database operations: `npm run db:push`, `npm run db:migrate`, `npm run db:seed`
+- Database operations: `npm run db:push`, `npm run db:seed`
 
 ## Project Structure
 
@@ -100,7 +135,6 @@ After seeding the database, you can use these test accounts:
 │   ├── src/
 │   │   ├── controllers/   # Route controllers
 │   │   ├── middleware/    # Express middleware
-│   │   ├── models/        # Database models (Prisma)
 │   │   ├── routes/        # API routes
 │   │   ├── services/      # Business logic
 │   │   └── lib/          # Utilities and database client
@@ -111,5 +145,35 @@ After seeding the database, you can use these test accounts:
 │       ├── pages/         # Page components
 │       ├── api/          # API client functions
 │       └── contexts/     # React contexts
-└── ops/                  # Operations and configuration files
+├── ops/                  # Operations and configuration files
+├── docker-compose.yml    # Docker Compose configuration
+├── Dockerfile           # Multi-stage Docker build
+└── build-docker.sh     # Docker build script
 ```
+
+## Environment Files
+
+The project uses multiple environment files for different purposes:
+
+### 1. `.env` (Root Directory)
+**Purpose**: Main environment configuration (used by both development and Docker)
+```env
+JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
+DATABASE_URL="file:./dev.db"
+API_URL="http://localhost:10003"
+VITE_API_URL="http://localhost:10003"
+```
+
+### 2. `web/env.production`
+**Purpose**: Frontend build-time environment variables
+```env
+VITE_API_URL="http://localhost:10003"
+```
+
+## Security Notes
+
+- JWT tokens only contain user ID, no role information
+- All authorization checks use database role verification
+- Admin panel access requires database admin role
+- Challenge involves finding JWT secret and understanding token structure
+- **CTF Hint**: The JWT secret can be found in environment files

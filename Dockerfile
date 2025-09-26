@@ -53,8 +53,8 @@ WORKDIR /app/server
 RUN npx prisma generate
 WORKDIR /app
 
-# Copy environment file template
-COPY ops/sample-etc-dot-env .env
+# Copy environment file
+COPY .env .env
 
 # Copy entire uploads directory from repo (ephemeral in container)
 RUN mkdir -p uploads && chown nextjs:nodejs uploads
