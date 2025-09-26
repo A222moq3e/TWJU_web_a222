@@ -156,7 +156,7 @@ docker-compose build --no-cache
 The project uses multiple environment files for different purposes:
 
 ### 1. `.env` (Root Directory)
-**Purpose**: Main environment configuration (used by both development and Docker)
+**Purpose**: Docker container environment configuration
 ```env
 JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
 DATABASE_URL="file:./dev.db"
@@ -164,7 +164,15 @@ API_URL="http://localhost:10003"
 VITE_API_URL="http://localhost:10003"
 ```
 
-### 2. `web/env.production`
+### 2. `server/.env` (Server Directory)
+**Purpose**: Backend server environment configuration (for local development)
+```env
+JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
+DATABASE_URL="file:./dev.db"
+PORT="10003"
+```
+
+### 3. `web/env.production`
 **Purpose**: Frontend build-time environment variables
 ```env
 VITE_API_URL="http://localhost:10003"
