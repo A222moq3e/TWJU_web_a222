@@ -56,11 +56,9 @@ WORKDIR /app
 # Copy environment file template
 COPY ops/sample-etc-dot-env .env
 
-# Create uploads directory and embed built-in default avatar
-RUN mkdir -p uploads \
-    && echo 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=' \
-    | base64 -d > uploads/default-1.png \
-    && chown -R nextjs:nodejs uploads
+# Copy entire uploads directory from repo (ephemeral in container)
+RUN mkdir -p uploads && chown nextjs:nodejs uploads
+COPY --chown=nextjs:nodejs uploads/ ./uploads/
 
 # Switch to non-root user
 USER nextjs
