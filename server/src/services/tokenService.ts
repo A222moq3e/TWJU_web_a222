@@ -4,8 +4,7 @@ import path from 'path';
 import { logger } from '../lib/logger';
 
 interface TokenPayload {
-  sub: string;
-  email: string;
+  id: string;
   role: string;
   iat?: number;
   exp?: number;

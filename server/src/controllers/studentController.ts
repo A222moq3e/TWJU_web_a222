@@ -37,7 +37,7 @@ export const getStudents = async (req: Request, res: Response) => {
 
 export const getDashboard = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt((req as any).user.sub);
+    const userId = parseInt((req as any).user.id);
     const user = await userService.getUserWithCourses(userId);
 
     if (!user) {

@@ -25,8 +25,7 @@ export const register = async (req: Request, res: Response) => {
 
     const user = await userService.createUser({ email, password });
     const token = tokenService.generateToken({
-      sub: user.id.toString(),
-      email: user.email,
+      id: user.id.toString(),
       role: user.role
     });
 
@@ -59,8 +58,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = tokenService.generateToken({
-      sub: user.id.toString(),
-      email: user.email,
+      id: user.id.toString(),
       role: user.role
     });
 
@@ -82,7 +80,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const getMe = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt((req as any).user.sub);
+    const userId = parseInt((req as any).user.id);
     // Load user with enrollments/courses to mirror former /me/dashboard
     const user = await userService.getUserWithCourses(userId);
 
@@ -125,7 +123,7 @@ export const getMe = async (req: Request, res: Response) => {
 
 export const getMyDashboard = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt((req as any).user.sub);
+    const userId = parseInt((req as any).user.id);
     const user = await userService.getUserWithCourses(userId);
 
     if (!user) {
@@ -165,7 +163,7 @@ export const getMyDashboard = async (req: Request, res: Response) => {
 
 export const updateMyName = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt((req as any).user.sub);
+    const userId = parseInt((req as any).user.id);
     const { displayName } = req.body as { displayName?: string };
     const updated = await userService.setDisplayName(userId, displayName);
     res.json({
@@ -184,7 +182,7 @@ export const updateMyName = async (req: Request, res: Response) => {
 
 export const updateMyEmail = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt((req as any).user.sub);
+    const userId = parseInt((req as any).user.id);
     const { email } = req.body as { email: string };
     if (!email) return res.status(400).json({ error: 'Email is required' });
     const updated = await userService.setEmail(userId, email);
@@ -211,7 +209,7 @@ export const uploadAvatarMiddleware = upload.single('avatar');
 
 export const updateMyAvatar = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt((req as any).user.sub);
+    const userId = parseInt((req as any).user.id);
     const file = (req as any).file as Express.Multer.File | undefined;
     if (!file) {
       return res.status(400).json({ error: 'Avatar file is required' });
@@ -263,7 +261,7 @@ export const updateMyAvatar = async (req: Request, res: Response) => {
 
 export const updateAvatarName = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt((req as any).user.sub);
+    const userId = parseInt((req as any).user.id);
     const { avatarName } = req.body;
 
     if (!avatarName) {
@@ -287,7 +285,7 @@ export const updateAvatarName = async (req: Request, res: Response) => {
 
 export const getMyAvatar = async (req: Request, res: Response) => {
   try {
-    const userId = parseInt((req as any).user.sub);
+    const userId = parseInt((req as any).user.id);
     const user = await userService.findUserById(userId);
     
     if (!user || !user.profile?.avatar) {
