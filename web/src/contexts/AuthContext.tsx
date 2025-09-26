@@ -30,6 +30,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem('token');
+      // TODO: this should be removed
       const savedUser = localStorage.getItem('user');
       
       if (token && savedUser) {

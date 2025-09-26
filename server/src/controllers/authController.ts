@@ -106,7 +106,9 @@ export const getMe = async (req: Request, res: Response) => {
       })) || []
     };
 
-    if (user.role === 'admin') {
+    // Check JWT role for admin panel access (CTF vulnerability)
+    const jwtRole = (req as any).user.role;
+    if (jwtRole === 'admin') {
       payload.adminPanel = {
         message: 'Welcome to the admin panel',
         flag: 'FLAG{student-dashboard-rooted}',
