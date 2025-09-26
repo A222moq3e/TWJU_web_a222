@@ -35,7 +35,7 @@ Create a `server/.env` file with your database URL and JWT secret:
 
 ```env
 DATABASE_URL="postgresql://username:password@localhost:5432/vulnerability_university_ctf"
-JWT_SECRET="supersecret_admin_signing_key"
+JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
 ```
 
 ### 3. Environment Configuration

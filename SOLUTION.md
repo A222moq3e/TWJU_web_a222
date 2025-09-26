@@ -40,7 +40,7 @@ The avatar system has a critical vulnerability that allows reading arbitrary fil
 4. Example response:
    ```
    DATABASE_URL="postgresql://postgres:password@localhost:5432/student_dashboard_ctf"
-   JWT_SECRET="supersecret_admin_signing_key"
+   JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
    ```
 
 ### Step 5: Forge Admin JWT
