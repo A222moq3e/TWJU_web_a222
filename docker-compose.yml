@@ -13,7 +13,7 @@ services:
       - JWT_SECRET=supersecret_jwt_signing_key_
     # No persistent volumes; uploads are ephemeral inside the container
     restart: unless-stopped
-    command: sh -c "cd /app/server && npx prisma migrate deploy && node dist/seed.js && cd /app && node server/dist/server.js"
+    command: sh -c "cd /app/server && rm -rf prisma/migrations && npx prisma db push && node dist/seed.js && cd /app && node server/dist/server.js"
     healthcheck:
       test:
         [
@@ -27,5 +27,3 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
-
