@@ -49,7 +49,7 @@ export const studentsApi = {
   },
 
   getDashboard: async (): Promise<DashboardData> => {
-    const response = await apiClient.get('/auth/me/dashboard');
+    const response = await apiClient.get('/auth/me');
     return response.data;
   }
 };
