@@ -99,9 +99,6 @@ async function main() {
   }
 
   console.log('Database seeded successfully!');
-  console.log('Admin user: admin@' + universityDomain + ' / admin123');
-  console.log('Test students: john.doe@stu' + universityDomain + ' / student123');
-  console.log('Created uploads directory with sample avatar');
   console.log(`Admin user ID: ${admin.id}`);
 
 }
