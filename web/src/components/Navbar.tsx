@@ -27,11 +27,6 @@ const Navbar: React.FC = () => {
                 <Link to="/dashboard" className="text-photography-700 hover:text-photography-900">
                   Dashboard
                 </Link>
-                {user.role === 'admin' && (
-                  <Link to="/admin" className="text-primary-600 hover:text-primary-700 font-medium">
-                    Admin Panel
-                  </Link>
-                )}
                 {/* <span className="text-photography-600">
                   {user.displayName || user.email}
                 </span> */}
