@@ -30,16 +30,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem('token');
-      // TODO: this should be removed
-      const savedUser = localStorage.getItem('user');
       
-      if (token && savedUser) {
+      if (token) {
         try {
           const userData = await authApi.getMe();
           setUser(userData);
         } catch (error) {
           localStorage.removeItem('token');
-          localStorage.removeItem('user');
         }
       }
       setLoading(false);
@@ -51,9 +48,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       const response = await authApi.login(email, password);
-      setUser(response.user);
       localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      // Fetch fresh user data from /me endpoint
+      const userData = await authApi.getMe();
+      setUser(userData);
     } catch (error) {
       // Re-throw the error so the calling component can handle it
       throw error;
@@ -63,9 +61,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (email: string, password: string) => {
     try {
       const response = await authApi.register(email, password);
-      setUser(response.user);
       localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      // Fetch fresh user data from /me endpoint
+      const userData = await authApi.getMe();
+      setUser(userData);
     } catch (error) {
       // Re-throw the error so the calling component can handle it
       throw error;
@@ -75,7 +74,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
   };
 
   const value = {

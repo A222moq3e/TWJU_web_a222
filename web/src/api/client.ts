@@ -30,7 +30,6 @@ apiClient.interceptors.response.use(
       if (!isAuthEndpoint) {
         // This is a 401 on a protected route, redirect to login
         localStorage.removeItem('token');
-        localStorage.removeItem('user');
         window.location.href = '/login';
       }
       // If it's a login/register attempt, let the error propagate normally

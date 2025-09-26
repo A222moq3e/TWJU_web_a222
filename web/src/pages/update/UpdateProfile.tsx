@@ -47,22 +47,10 @@ const UpdateProfile: React.FC = () => {
       if (displayName !== (user?.displayName || '')) {
         const updated = await authApi.patchName(displayName);
         setUser(updated);
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-          const parsed = JSON.parse(savedUser);
-          parsed.displayName = updated.displayName;
-          localStorage.setItem('user', JSON.stringify(parsed));
-        }
       }
       if (email && email !== user?.email) {
         const updated = await authApi.patchEmail(email);
         setUser(updated);
-        const savedUser2 = localStorage.getItem('user');
-        if (savedUser2) {
-          const parsed = JSON.parse(savedUser2);
-          parsed.email = updated.email;
-          localStorage.setItem('user', JSON.stringify(parsed));
-        }
       }
       if (grade) {
         const updated = await authApi.patchGrade(grade);
@@ -80,14 +68,6 @@ const UpdateProfile: React.FC = () => {
         // Step 2: Upload avatar file
         const updated = await authApi.uploadAvatar(avatarFile);
         setUser(updated);
-        
-        // Update localStorage
-        const savedUser = localStorage.getItem('user');
-        if (savedUser) {
-          const parsed = JSON.parse(savedUser);
-          parsed.avatar = avatarName;
-          localStorage.setItem('user', JSON.stringify(parsed));
-        }
       }
       setMessage('Profile updated');
     } catch (e: any) {
