@@ -1,25 +1,7 @@
 version: "3.8"
 
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-bullseye
-    container_name: student-dashboard-db
-    environment:
-      POSTGRES_DB: student_dashboard_ctf
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432" # Changed to 5433 to avoid conflict
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Student Dashboard Application
+  # Student Dashboard Application (SQLite)
   app:
     build: .
     container_name: student-dashboard-app
@@ -27,15 +9,13 @@ services:
       - "10009:10003"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:password@postgres:5432/student_dashboard_ctf
+      - DATABASE_URL=file:./dev.db
       - JWT_SECRET=supersecret_jwt_signing_key_
-    depends_on:
-      postgres:
-        condition: service_healthy
     volumes:
       - student-uploads:/app/uploads
+      - sqlite-data:/app/server/prisma
     restart: unless-stopped
-    command: sh -c "echo '⏳ Waiting for database...' && sleep 10 && echo '🚀 Initializing database...' && cd /app/server && npx prisma migrate deploy && node dist/seed.js && echo '✅ Database initialized! Starting app...' && cd /app && node server/dist/server.js"
+    command: sh -c "cd /app/server && npx prisma migrate deploy && node dist/seed.js && cd /app && node server/dist/server.js"
     healthcheck:
       test:
         [
@@ -51,5 +31,5 @@ services:
       retries: 3
 
 volumes:
-  postgres_data:
   student-uploads:
+  sqlite-data:

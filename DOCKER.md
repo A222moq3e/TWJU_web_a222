@@ -4,7 +4,7 @@ This guide explains how to build and deploy the Student Dashboard CTF using Dock
 
 ## Quick Start
 
-1. **Build and start all services (database setup is automatic):**
+1. **Build and start the app (SQLite, database setup is automatic):**
    ```bash
    docker-compose up -d
    ```
@@ -12,7 +12,7 @@ This guide explains how to build and deploy the Student Dashboard CTF using Dock
 2. **Access the application:**
    - Web interface: http://localhost:10009
    - API: http://localhost:10009/api
-   - Database: localhost:5433 (if you need direct access)
+   - SQLite DB file is inside the container: `/app/server/prisma/dev.db`
 
 ## Environment Variables
 
@@ -20,12 +20,12 @@ This guide explains how to build and deploy the Student Dashboard CTF using Dock
 |----------|-------------|---------|
 | `NODE_ENV` | Environment mode | `production` |
 | `PORT` | Server port | `3000` |
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://postgres:password@postgres:5432/student_dashboard_ctf` |
+| `DATABASE_URL` | SQLite connection string | `file:./dev.db` |
 | `JWT_SECRET` | JWT signing secret | `supersecret_jwt_signing_key_` |
 
 ## Database Setup
 
-The application uses PostgreSQL with Prisma ORM. The database schema is automatically applied when the container starts.
+The application uses SQLite with Prisma ORM. The database schema is automatically applied when the container starts.
 
 ### Manual Database Operations
 
@@ -39,7 +39,7 @@ docker-compose exec app npx prisma db seed
 # Reset the database
 docker-compose exec app npx prisma migrate reset
 
-# View database
+# View database (Prisma Studio)
 docker-compose exec app npx prisma studio
 ```
 
@@ -77,8 +77,7 @@ The application includes health checks to monitor service status:
 # View application logs
 docker-compose logs -f app
 
-# View database logs
-docker-compose logs -f postgres
+# (No database container; SQLite is embedded)
 
 # View all logs
 docker-compose logs -f

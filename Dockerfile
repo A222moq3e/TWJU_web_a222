@@ -35,10 +35,7 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
-# Install PostgreSQL client for database operations
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
+# (No external DB client needed for SQLite)
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
