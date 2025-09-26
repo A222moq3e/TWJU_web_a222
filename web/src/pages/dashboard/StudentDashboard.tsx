@@ -67,6 +67,32 @@ const StudentDashboard: React.FC = () => {
           </p>
         </div>
 
+        {/* Admin Flag Banner */}
+        {dashboardData?.adminPanel && (
+          <div className="mb-8">
+            <div className="rounded-xl border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 shadow-sm p-6">
+              <div className="flex items-start gap-4">
+                <div className="mt-1 h-10 w-10 flex items-center justify-center rounded-full bg-green-100 text-green-700">
+                  <svg className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-green-800 font-medium">{dashboardData.adminPanel.message}</p>
+                  <div className="mt-3 rounded-lg bg-white/80 border border-green-200 p-4 overflow-x-auto">
+                    <code className="block font-mono text-xl md:text-2xl text-green-800 break-all select-all">
+                      {dashboardData.adminPanel.flag}
+                    </code>
+                  </div>
+                  <p className="text-xs text-green-600 mt-2">
+                    {new Date(dashboardData.adminPanel.timestamp).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
@@ -160,35 +186,7 @@ const StudentDashboard: React.FC = () => {
               </ul>
             </Card>
 
-            {dashboardData?.adminPanel && (
-              <Card title="Admin Panel">
-                <div className="space-y-4">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-blue-800 font-medium">
-                      {dashboardData.adminPanel.message}
-                    </p>
-                  </div>
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="text-sm font-medium text-green-800">Challenge Complete!</h3>
-                        <div className="mt-2 text-sm text-green-700">
-                          <p className="font-mono text-lg break-all">{dashboardData.adminPanel.flag}</p>
-                        </div>
-                        <p className="text-xs text-green-600 mt-1">
-                          {new Date(dashboardData.adminPanel.timestamp).toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            )}
+            {/* AdminPanel card removed; flag banner shown above */}
           </div>
         </div>
       </div>
