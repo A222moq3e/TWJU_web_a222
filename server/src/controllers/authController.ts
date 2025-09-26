@@ -25,8 +25,7 @@ export const register = async (req: Request, res: Response) => {
 
     const user = await userService.createUser({ email, password });
     const token = tokenService.generateToken({
-      id: user.id.toString(),
-      role: user.role
+      id: user.id.toString()
     });
 
     res.status(201).json({
@@ -58,8 +57,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = tokenService.generateToken({
-      id: user.id.toString(),
-      role: user.role
+      id: user.id.toString()
     });
 
     res.json({
@@ -104,9 +102,8 @@ export const getMe = async (req: Request, res: Response) => {
       })) || []
     };
 
-    // Check JWT role for admin panel access (CTF vulnerability)
-    const jwtRole = (req as any).user.role;
-    if (jwtRole === 'admin') {
+    // Check database role for admin panel access
+    if (user.role === 'admin') {
       payload.adminPanel = {
         message: 'Welcome to the admin panel',
         flag: 'FLAG{student-dashboard-rooted}',

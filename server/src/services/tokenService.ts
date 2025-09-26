@@ -5,7 +5,6 @@ import { logger } from '../lib/logger';
 
 interface TokenPayload {
   id: string;
-  role: string;
   iat?: number;
   exp?: number;
 }
