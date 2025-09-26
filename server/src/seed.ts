@@ -55,10 +55,10 @@ async function main() {
 
   // Create courses
   const courses = [
-    { title: 'Introduction to Computer Science', description: 'Basic programming concepts', sectionNumber: '001', courseCode: 'CS101', hours: 3 },
-    { title: 'Web Development Fundamentals', description: 'HTML, CSS, and JavaScript basics', sectionNumber: '002', courseCode: 'WEB201', hours: 3 },
-    { title: 'Database Design', description: 'Relational database concepts and SQL', sectionNumber: '001', courseCode: 'DB301', hours: 4 },
-    { title: 'Cybersecurity Basics', description: 'Introduction to security concepts', sectionNumber: '003', courseCode: 'SEC101', hours: 2 }
+    { title: 'Introduction to Computer Science', description: 'Basic programming concepts', sectionNumber: '171', courseCode: 'CS101', hours: 4 },
+    { title: 'Web Development Fundamentals', description: 'HTML, CSS, and JavaScript basics', sectionNumber: '173', courseCode: 'WEB201', hours: 3 },
+    { title: 'Enviroment Variables', description: 'how we can set variables in secure way', sectionNumber: '172', courseCode: 'ENV301', hours: 2 },
+    { title: 'Cybersecurity Basics', description: 'Introduction to security concepts', sectionNumber: '171', courseCode: 'SEC101', hours: 2 }
   ];
 
   const createdCourses = [];
