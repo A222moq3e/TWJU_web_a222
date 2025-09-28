@@ -6,7 +6,7 @@ services:
     build: .
     container_name: student-dashboard-app
     ports:
-      - "10009:10003"
+      - "10009:5000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:./dev.db
@@ -22,7 +22,7 @@ services:
           "--no-verbose",
           "--tries=1",
           "--spider",
-          "http://localhost:3000/api/health",
+          "http://localhost:5000/api/health",
         ]
       interval: 30s
       timeout: 10s

@@ -1,75 +1,57 @@
 # Multi-stage build for Student Dashboard CTF
-FROM node:18-bullseye-slim AS base
+FROM node:18-bullseye-slim AS app
 
-## (deps stage removed; not needed on Debian base)
+# Install socat for HTTP traffic redirection
+RUN apt-get update && apt-get install socat -y
 
 # Install server dependencies
-FROM base AS server-deps
 WORKDIR /app/server
 COPY server/package*.json ./
 RUN npm ci
 
 # Install web dependencies
-FROM base AS web-deps
 WORKDIR /app/web
 COPY web/package*.json ./
 RUN npm ci
 
 # Build the web application
-FROM base AS web-builder
 WORKDIR /app/web
-COPY web/package*.json ./
-RUN npm ci
 COPY web/ ./
 RUN npm run build
 
 # Build the server application
-FROM base AS server-builder
 WORKDIR /app/server
-COPY server/package*.json ./
-RUN npm ci
 COPY server/ ./
 RUN npm run build
 
-# Production image
-FROM base AS runner
-WORKDIR /app
-
-# (No external DB client needed for SQLite)
-
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Copy built applications
-COPY --from=web-builder --chown=nextjs:nodejs /app/web/dist ./web/dist
-COPY --from=server-builder --chown=nextjs:nodejs /app/server/dist ./server/dist
-COPY --from=server-builder --chown=nextjs:nodejs /app/server/node_modules ./server/node_modules
-COPY --from=server-builder --chown=nextjs:nodejs /app/server/package*.json ./server/
-COPY --from=server-builder --chown=nextjs:nodejs /app/server/prisma ./server/prisma
-
-# Generate Prisma Client for linux-musl inside the final image
-WORKDIR /app/server
+# Generate Prisma Client
 RUN npx prisma generate
-WORKDIR /app
 
 # Copy environment files
+WORKDIR /app
 COPY .env .env
 COPY server/.env server/.env
 
 # Copy entire uploads directory from repo (ephemeral in container)
-RUN mkdir -p uploads && chown nextjs:nodejs uploads
-COPY --chown=nextjs:nodejs server/uploads/ ./uploads/
+RUN mkdir -p uploads
+COPY server/uploads/ ./uploads/
 
-# Switch to non-root user
-USER nextjs
+# Final stage using pwn.red/jail
+FROM pwn.red/jail
 
-# Expose port
-EXPOSE 3000
+# Copy the entire application from the build stage
+COPY --from=app / /srv
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+# Add flag replacement hook
+RUN echo 'sed -i "s/REDACTED/${FLAG}/" /tmp/nsjail.cfg' >> /jail/hook.sh
 
-# Start the application
-CMD ["node", "server/dist/server.js"]
+# Copy the run script
+COPY ./run.sh /srv/app/run
+RUN chmod 755 /srv/app/run
+
+# Set jail environment variables
+ENV JAIL_PIDS=30 JAIL_CPU=1000 JAIL_MEM=50M JAIL_TIME=30
+ENV JAIL_ENV_NODE_ENV=production JAIL_ENV_FLAG=REDACTED
+
+# Expose port 5000 as required by FlagYard
+EXPOSE 5000
