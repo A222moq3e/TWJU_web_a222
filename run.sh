@@ -5,10 +5,10 @@
 # Start the Node.js server in the background
 cd /srv/app/server
 rm -rf prisma/migrations
-npx prisma db push
-node dist/seed.js
+/srv/app/server/node_modules/.bin/prisma db push
+/srv/app/server/node_modules/.bin/node dist/seed.js
 cd /srv/app
-node server/dist/server.js &
+/srv/app/server/node_modules/.bin/node server/dist/server.js &
 
 # Use socat to redirect HTTP traffic to the service running on port 5000
-socat - TCP:127.0.0.1:5000,forever
+/srv/usr/bin/socat - TCP:127.0.0.1:5000,forever

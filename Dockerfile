@@ -72,11 +72,6 @@ RUN echo 'sed -i "s/REDACTED/${FLAG}/" /tmp/nsjail.cfg' >> /jail/hook.sh
 COPY ./run.sh /srv/app/run
 RUN chmod +x /srv/app/run
 
-# Create symlinks for binaries in jail environment
-RUN ln -sf /srv/app/server/node_modules/.bin/node /jail/node
-RUN ln -sf /srv/app/server/node_modules/.bin/npx /jail/npx
-RUN ln -sf /srv/usr/bin/socat /jail/socat
-
 # Jail configuration
 ENV JAIL_PIDS=30 JAIL_CPU=1000 JAIL_MEM=1G JAIL_TIME=30
 ENV JAIL_ENV_NODE_ENV=production JAIL_ENV_DATABASE_URL=file:./dev.db JAIL_ENV_JWT_SECRET=supers3cr3t_adm1n_s1gn1ng_k3y_a222 JAIL_ENV_FLAG=REDACTED
