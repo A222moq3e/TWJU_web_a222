@@ -15,6 +15,6 @@ services:
     # No persistent volumes; uploads are ephemeral inside the container
     restart: unless-stopped
     # Use the run.sh script for proper jail execution
-    command: ["/jail/run"]
+    command: ["/srv/app/run"]
     # Remove healthcheck as it's not needed for FlagYard challenges
     mem_limit: 1g
