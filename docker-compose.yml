@@ -13,7 +13,7 @@ services:
       - JWT_SECRET=supers3cr3t_adm1n_s1gn1ng_k3y_a222
     # No persistent volumes; uploads are ephemeral inside the container
     restart: unless-stopped
-    command: sh -c "cd /app/server && rm -rf prisma/migrations && npx prisma db push && node dist/seed.js && cd /app && node server/dist/server.js"
+    command: /srv/app/run
     healthcheck:
       test:
         [
