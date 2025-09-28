@@ -79,7 +79,7 @@ class UserService {
         logger.info(`User avatar file exists after copy: ${fs.existsSync(userAvatarPath)}`);
       } else {
         logger.warn(`Default avatar not found at: ${defaultAvatarPath}`);
-        logger.warn(`Directory listing of uploads folder:`, fs.readdirSync(path.join(process.cwd(), 'uploads')).join(', '));
+        logger.warn(`Directory listing of uploads folder:`, fs.readdirSync(path.join(process.cwd(), 'server', 'uploads')).join(', '));
       }
     } catch (error) {
       logger.error('Failed to copy default avatar:', error);

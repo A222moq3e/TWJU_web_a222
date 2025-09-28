@@ -201,7 +201,7 @@ export const updateMyEmail = async (req: Request, res: Response) => {
 
 
 // Multer setup for avatar uploads
-const upload = multer({ dest: path.join(process.cwd(), 'uploads', 'tmp') });
+const upload = multer({ dest: path.join(process.cwd(), 'server', 'uploads', 'tmp') });
 
 export const uploadAvatarMiddleware = upload.single('avatar');
 

@@ -29,8 +29,8 @@ app.get('/api/health', (_req, res) => {
 
 /**
  * ---- Serve built SPA ----
- * In jail environment, the structure is /srv/app/web/dist
- * After tsc, __dirname === /srv/app/server/dist, so ../../web/dist is correct.
+ * After tsc, __dirname === server/dist, so ../../web/dist is your client build.
+ * I’m NOT gating by NODE_ENV so it works immediately.
  */
 const clientDist = path.resolve(__dirname, '..', '..', 'web', 'dist');
 logger.info(`Serving static client from: ${clientDist}`);

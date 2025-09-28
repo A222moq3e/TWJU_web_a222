@@ -1,62 +1,80 @@
 # Multi-stage build for Student Dashboard CTF
-FROM node:18-bullseye-slim AS app
-
-# Install socat for HTTP traffic redirection
-RUN apt-get update && apt-get install socat -y
+FROM node:18-bullseye-slim AS base
 
 # Install server dependencies
+FROM base AS server-deps
 WORKDIR /app/server
 COPY server/package*.json ./
 RUN npm ci
 
 # Install web dependencies
+FROM base AS web-deps
 WORKDIR /app/web
 COPY web/package*.json ./
 RUN npm ci
 
 # Build the web application
+FROM base AS web-builder
 WORKDIR /app/web
+COPY web/package*.json ./
+RUN npm ci
 COPY web/ ./
 RUN npm run build
 
 # Build the server application
+FROM base AS server-builder
 WORKDIR /app/server
+COPY server/package*.json ./
+RUN npm ci
 COPY server/ ./
 RUN npm run build
 
-# Generate Prisma Client
+# Production image with socat for port redirection
+FROM base AS app
+RUN apt-get update && apt-get install socat -y
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy built applications
+COPY --from=web-builder --chown=nextjs:nodejs /app/web/dist ./web/dist
+COPY --from=server-builder --chown=nextjs:nodejs /app/server/dist ./server/dist
+COPY --from=server-builder --chown=nextjs:nodejs /app/server/node_modules ./server/node_modules
+COPY --from=server-builder --chown=nextjs:nodejs /app/server/package*.json ./server/
+COPY --from=server-builder --chown=nextjs:nodejs /app/server/prisma ./server/prisma
+
+# Generate Prisma Client for linux-musl inside the final image
+WORKDIR /app/server
 RUN npx prisma generate
+WORKDIR /app
 
 # Copy environment files
-WORKDIR /app
 COPY .env .env
 COPY server/.env server/.env
 
 # Copy entire uploads directory from repo (ephemeral in container)
-RUN mkdir -p uploads
-COPY server/uploads/ ./uploads/
+RUN mkdir -p uploads && chown nextjs:nodejs uploads
+COPY --chown=nextjs:nodejs server/uploads/ ./uploads/
 
-# Final stage using pwn.red/jail
+# Switch to non-root user
+USER nextjs
+
+# Use redpwn/jail for sandboxing
 FROM pwn.red/jail
-
-# Copy the entire application from the build stage
 COPY --from=app / /srv
 
-# Add flag replacement hook
+# Create hook script to inject flag
 RUN echo 'sed -i "s/REDACTED/${FLAG}/" /tmp/nsjail.cfg' >> /jail/hook.sh
 
-# Remove any existing run directory and copy the run script
-RUN rm -rf /srv/run
-COPY ./run.sh /srv/run
-RUN chmod 755 /srv/run
+# Copy run script
+COPY ./run.sh /srv/app/run
+RUN chmod 755 /srv/app/run
 
-# Debug: Verify the file structure
-RUN ls -la /srv/
-RUN ls -la /srv/app/
+# Jail configuration
+ENV JAIL_PIDS=30 JAIL_CPU=1000 JAIL_MEM=1G JAIL_TIME=30
+ENV JAIL_ENV_NODE_ENV=production JAIL_ENV_DATABASE_URL=file:./dev.db JAIL_ENV_JWT_SECRET=supers3cr3t_adm1n_s1gn1ng_k3y_a222 JAIL_ENV_FLAG=REDACTED
 
-# Set jail environment variables
-ENV JAIL_PIDS=30 JAIL_CPU=1000 JAIL_MEM=50M JAIL_TIME=30
-ENV JAIL_ENV_NODE_ENV=production JAIL_ENV_FLAG=REDACTED
-
-# Expose port 5000 as required by FlagYard
+# Expose port 5000 as required
 EXPOSE 5000
