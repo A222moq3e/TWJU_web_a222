@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Run script for FlagYard challenge
 # This script starts the Node.js server and redirects traffic using socat
 

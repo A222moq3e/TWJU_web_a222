@@ -68,9 +68,10 @@ COPY --from=app / /srv
 # Create hook script to inject flag
 RUN echo 'sed -i "s/REDACTED/${FLAG}/" /tmp/nsjail.cfg' >> /jail/hook.sh
 
-# Copy run script
+# Copy run script to multiple locations for jail compatibility
 COPY ./run.sh /srv/app/run
-RUN chmod 755 /srv/app/run
+COPY ./run.sh /jail/run
+RUN chmod +x /srv/app/run /jail/run
 
 # Jail configuration
 ENV JAIL_PIDS=30 JAIL_CPU=1000 JAIL_MEM=1G JAIL_TIME=30
