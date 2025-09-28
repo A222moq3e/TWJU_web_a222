@@ -29,9 +29,8 @@ RUN npm ci
 COPY server/ ./
 RUN npm run build
 
-# Production image with socat for port redirection
+# Production image
 FROM base AS app
-RUN apt-get update && apt-get install socat -y
 WORKDIR /app
 
 # Create non-root user
