@@ -13,7 +13,7 @@ services:
       - JWT_SECRET=supers3cr3t_adm1n_s1gn1ng_k3y_a222
     # No persistent volumes; uploads are ephemeral inside the container
     restart: unless-stopped
-    command: /srv/app/run
+    command: /srv/run
     healthcheck:
       test:
         [

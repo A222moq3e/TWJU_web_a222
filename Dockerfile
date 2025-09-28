@@ -46,8 +46,13 @@ COPY --from=app / /srv
 RUN echo 'sed -i "s/REDACTED/${FLAG}/" /tmp/nsjail.cfg' >> /jail/hook.sh
 
 # Copy the run script
-COPY ./run.sh /srv/app/run
-RUN chmod 755 /srv/app/run
+COPY ./run.sh /srv/run
+RUN chmod 755 /srv/run
+
+# Debug: Verify the file structure
+RUN ls -la /srv/
+RUN ls -la /srv/app/
+RUN cat /srv/run
 
 # Set jail environment variables
 ENV JAIL_PIDS=30 JAIL_CPU=1000 JAIL_MEM=50M JAIL_TIME=30
