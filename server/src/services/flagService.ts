@@ -4,21 +4,21 @@ class FlagService {
   private static flag: string | null = null;
 
   /**
-   * Get the flag from environment variable or generate a static one
+   * Generate a random 64-character hex flag
    */
-  static getFlag(): string {
+  static generateFlag(): string {
     if (!this.flag) {
-      // Use dynamic flag from environment variable if available
-      const envFlag = process.env.FLAG;
-      if (envFlag) {
-        this.flag = envFlag;
-      } else {
-        // Fallback to static flag for local development
-        const randomBytes = crypto.randomBytes(16); // 16 bytes = 32 hex characters
-        this.flag = `FlagY{${randomBytes.toString('hex')}}`;
-      }
+      const randomBytes = crypto.randomBytes(16); // 16 bytes = 32 hex characters
+      this.flag = `FLAG{${randomBytes.toString('hex')}}`;
     }
     return this.flag;
+  }
+
+  /**
+   * Get the current flag (generate if not exists)
+   */
+  static getFlag(): string {
+    return this.generateFlag();
   }
 
   /**

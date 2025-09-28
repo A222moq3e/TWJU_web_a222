@@ -1,6 +1,8 @@
 # Multi-stage build for Student Dashboard CTF
 FROM node:18-bullseye-slim AS base
 
+## (deps stage removed; not needed on Debian base)
+
 # Install server dependencies
 FROM base AS server-deps
 WORKDIR /app/server
@@ -30,8 +32,10 @@ COPY server/ ./
 RUN npm run build
 
 # Production image
-FROM base AS app
+FROM base AS runner
 WORKDIR /app
+
+# (No external DB client needed for SQLite)
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
@@ -60,20 +64,12 @@ COPY --chown=nextjs:nodejs server/uploads/ ./uploads/
 # Switch to non-root user
 USER nextjs
 
-# Use redpwn/jail for sandboxing
-FROM pwn.red/jail
-COPY --from=app / /srv
+# Expose port
+EXPOSE 3000
 
-# Create hook script to inject flag
-RUN echo 'sed -i "s/REDACTED/${FLAG}/" /tmp/nsjail.cfg' >> /jail/hook.sh
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
 
-# Copy run script
-COPY ./run.sh /srv/app/run
-RUN chmod +x /srv/app/run
-
-# Jail configuration
-ENV JAIL_PIDS=30 JAIL_CPU=1000 JAIL_MEM=1G JAIL_TIME=30
-ENV JAIL_ENV_NODE_ENV=production JAIL_ENV_DATABASE_URL=file:./dev.db JAIL_ENV_JWT_SECRET=supers3cr3t_adm1n_s1gn1ng_k3y_a222 JAIL_ENV_FLAG=REDACTED
-
-# Expose port 5000 as required
-EXPOSE 5000
+# Start the application
+CMD ["node", "server/dist/server.js"]
