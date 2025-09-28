@@ -1,24 +1,33 @@
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 
 class FlagService {
   private static flag: string | null = null;
 
   /**
-   * Generate a random 64-character hex flag
-   */
-  static generateFlag(): string {
-    if (!this.flag) {
-      const randomBytes = crypto.randomBytes(16); // 16 bytes = 32 hex characters
-      this.flag = `FLAG{${randomBytes.toString('hex')}}`;
-    }
-    return this.flag;
-  }
-
-  /**
-   * Get the current flag (generate if not exists)
+   * Get the flag from environment or flag file
    */
   static getFlag(): string {
-    return this.generateFlag();
+    if (!this.flag) {
+      // First try to get from environment variable
+      if (process.env.FLAG) {
+        this.flag = process.env.FLAG;
+      } else {
+        // Try to read from flag file
+        try {
+          const flagPath = path.join(process.cwd(), '..', 'flag.txt');
+          if (fs.existsSync(flagPath)) {
+            this.flag = fs.readFileSync(flagPath, 'utf8').trim();
+          }
+        } catch (error) {
+          // Fallback to generating a flag if neither environment nor file exists
+          const randomBytes = crypto.randomBytes(16);
+          this.flag = `FLAG{${randomBytes.toString('hex')}}`;
+        }
+      }
+    }
+    return this.flag;
   }
 
   /**

@@ -1,29 +1,13 @@
 version: "3.8"
 
 services:
-  # Student Dashboard Application (SQLite)
+  # Student Dashboard Application with redpwn/jail
   app:
     build: .
     container_name: student-dashboard-app
     ports:
-      - "10009:10003"
+      - "5000:5000"
     environment:
-      - NODE_ENV=production
-      - DATABASE_URL=file:./dev.db
-      - JWT_SECRET=supers3cr3t_adm1n_s1gn1ng_k3y_a222
-    # No persistent volumes; uploads are ephemeral inside the container
+      - FLAG=FlagY{test_flag_for_development}
+    privileged: true
     restart: unless-stopped
-    command: sh -c "cd /app/server && rm -rf prisma/migrations && npx prisma db push && node dist/seed.js && cd /app && node server/dist/server.js"
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "wget",
-          "--no-verbose",
-          "--tries=1",
-          "--spider",
-          "http://localhost:3000/api/health",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
