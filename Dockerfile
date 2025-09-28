@@ -1,5 +1,7 @@
-# Multi-stage build for Student Dashboard CTF with redpwn/jail
+# Multi-stage build for Student Dashboard CTF
 FROM node:18-bullseye-slim AS base
+
+## (deps stage removed; not needed on Debian base)
 
 # Install server dependencies
 FROM base AS server-deps
@@ -29,42 +31,45 @@ RUN npm ci
 COPY server/ ./
 RUN npm run build
 
-# Production image with redpwn/jail
-FROM pwn.red/jail
+# Production image
+FROM base AS runner
+WORKDIR /app
 
-# Copy built applications to /srv (jail root)
-COPY --from=web-builder /app/web/dist /srv/web/dist
-COPY --from=server-builder /app/server/dist /srv/server/dist
-COPY --from=server-builder /app/server/node_modules /srv/server/node_modules
-COPY --from=server-builder /app/server/package*.json /srv/server/
-COPY --from=server-builder /app/server/prisma /srv/server/prisma
+# (No external DB client needed for SQLite)
 
-# Copy uploads directory
-RUN mkdir -p /srv/uploads
-COPY --from=server-builder /app/server/uploads/ /srv/uploads/
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
-# Create app directory and run script
-RUN mkdir -p /srv/app
-COPY ./run.sh /srv/app/run
-RUN chmod 755 /srv/app/run
+# Copy built applications
+COPY --from=web-builder --chown=nextjs:nodejs /app/web/dist ./web/dist
+COPY --from=server-builder --chown=nextjs:nodejs /app/server/dist ./server/dist
+COPY --from=server-builder --chown=nextjs:nodejs /app/server/node_modules ./server/node_modules
+COPY --from=server-builder --chown=nextjs:nodejs /app/server/package*.json ./server/
+COPY --from=server-builder --chown=nextjs:nodejs /app/server/prisma ./server/prisma
 
-# Create jail hook script for flag injection
-RUN mkdir -p /jail
-COPY ./hook.sh /jail/hook.sh
-RUN chmod 755 /jail/hook.sh
+# Generate Prisma Client for linux-musl inside the final image
+WORKDIR /app/server
+RUN npx prisma generate
+WORKDIR /app
 
-# Configure redpwn/jail environment
-ENV JAIL_PIDS=30
-ENV JAIL_CPU=1000
-ENV JAIL_MEM=50M
-ENV JAIL_TIME=30
-ENV JAIL_CONNS=0
-ENV JAIL_CONNS_PER_IP=0
-ENV JAIL_POW=0
-ENV JAIL_PORT=5000
-ENV JAIL_ENV_NODE_ENV=production
-ENV JAIL_ENV_DATABASE_URL=file:./dev.db
-ENV JAIL_ENV_JWT_SECRET=supers3cr3t_adm1n_s1gn1ng_k3y_a222
-ENV JAIL_ENV_FLAG=REDACTED
+# Copy environment files
+COPY .env .env
+COPY server/.env server/.env
 
-EXPOSE 5000
+# Copy entire uploads directory from repo (ephemeral in container)
+RUN mkdir -p uploads && chown nextjs:nodejs uploads
+COPY --chown=nextjs:nodejs server/uploads/ ./uploads/
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+
+# Start the application
+CMD ["node", "server/dist/server.js"]

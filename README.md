@@ -1,87 +1,194 @@
-# Student Dashboard CTF Challenge
+# Student Dashboard CTF
 
-A web application challenge built with Node.js, Express, React, and Prisma, sandboxed using redpwn/jail.
+A student dashboard application built with React and Express.js that demonstrates JWT security vulnerabilities. This CTF challenge teaches about JWT token manipulation and database privilege escalation.
 
-## Challenge Description
+## Tech Stack
 
-This is a student dashboard application where users can register, login, and manage their profiles. The challenge involves finding and exploiting vulnerabilities to obtain the flag.
+- **Frontend**: React + TypeScript + Tailwind CSS
+- **Backend**: Express.js + TypeScript
+- **Database**: SQLite with Prisma ORM
+- **Authentication**: JWT (HS256)
+- **Deployment**: Docker + Docker Compose
 
-## Setup
+## Prerequisites
 
-### Prerequisites
+- Docker and Docker Compose
+- OR Node.js (v18 or higher) + npm for local development
 
-- Docker
-- Docker Compose
+## Quick Start with Docker
 
-### Running the Challenge
-
-1. Build and run the container:
-```bash
-docker-compose up --build
-```
-
-2. The application will be available at `http://localhost:5000`
-
-3. To run with a custom flag:
-```bash
-FLAG=FlagY{your_custom_flag} docker-compose up --build
-```
-
-### Using redpwn/jail
-
-This challenge uses redpwn/jail for sandboxing. The configuration includes:
-
-- **JAIL_PIDS**: 30 (maximum processes per connection)
-- **JAIL_CPU**: 1000 (CPU milliseconds per wall second)
-- **JAIL_MEM**: 50M (maximum memory per connection)
-- **JAIL_TIME**: 30 (maximum wall seconds per connection)
-- **JAIL_PORT**: 5000 (port to bind to)
-
-## Solving the Challenge
-
-### Automated Solver
-
-Run the provided solving script:
+### 1. Build and Run
 
 ```bash
-pip install -r requirements.txt
-python solve.py http://localhost:5000
+# Build the Docker image
+docker-compose build
+
+# Start the application
+docker-compose up -d
 ```
 
-### Manual Testing
+### 2. Access the Application
 
-1. Register a new user account
-2. Login with your credentials
-3. Explore the application for vulnerabilities
-4. Look for ways to access the flag
+- **Web Interface**: http://localhost:10009
+- **API**: http://localhost:10009/api
 
-## Files Structure
+The database is automatically initialized with sample data when the container starts.
 
-- `Dockerfile` - Multi-stage build with redpwn/jail
-- `run.sh` - Entry point script for the jail
-- `hook.sh` - Jail hook script for flag injection
-- `solve.py` - Automated solving script
-- `requirements.txt` - Python dependencies for solver
-- `server/` - Backend Node.js application
-- `web/` - Frontend React application
+## Local Development Setup
 
-## Challenge Requirements Compliance
+### 1. Install Dependencies
 
-✅ **Dockerized**: Single container using redpwn/jail  
-✅ **Sandboxed**: Uses redpwn/jail for command execution/file access  
-✅ **No Internet**: Container has no external network access  
-✅ **No Persistence**: Stateless application  
-✅ **Dynamic Flag**: Flag passed as environment variable  
-✅ **Port 5000**: Application runs on port 5000  
-✅ **Source Code**: Full source code provided  
-✅ **Solving Script**: Automated solver included  
-✅ **Size Limit**: Under 200MB  
-✅ **No External Dependencies**: Self-contained  
+```bash
+npm run setup
+```
 
-## Flag Format
+### 2. Environment Configuration
 
-The flag follows the pattern: `FlagY{<md5>}` for static flags or dynamic flags passed at runtime.
+Create a `.env` file in the root directory:
 
-## Author
+```env
+JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
+DATABASE_URL="file:./dev.db"
+API_URL="http://localhost:10003"
+VITE_API_URL="http://localhost:10003"
+```
 
-CTF Challenge Author
+### 3. Database Setup
+
+The application uses SQLite with automatic database initialization:
+
+```bash
+npm run db:push
+npm run db:seed
+```
+
+### 4. Start Development Servers
+
+```bash
+npm run dev
+```
+
+This starts the backend server (port 10003) and frontend development server (port 10002).
+
+## Test Accounts
+
+After seeding the database, you can use these test accounts:
+
+- **Admin**: admin@utwj.local / admin123_jR1a1nXd%0a222
+- **Student**: john.doe@stuutwj.local / student123
+
+## CTF Challenge
+
+This application contains a JWT security vulnerability. The challenge involves:
+
+1. **Finding the JWT Secret**: Discover the JWT signing secret from environment variables
+2. **Token Manipulation**: Create a JWT token with admin privileges
+3. **Privilege Escalation**: Access the admin panel to retrieve the dynamic flag
+
+### Dynamic Flag
+
+The flag is generated dynamically on each application startup:
+- **Format**: `FLAG{32-character-hex-string}`
+- **Example**: `FLAG{}`
+- **Generation**: Random 16 bytes converted to 32-character hexadecimal string
+
+### JWT Structure
+
+The JWT tokens contain only:
+```json
+{
+  "id": "1",
+  "iat": 1758901530,
+  "exp": 1758987930
+}
+```
+
+**Note**: Role information is stored in the database, not in the JWT token.
+
+## API Endpoints
+
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User authentication
+- `GET /auth/me` - Get current user info (includes admin panel if admin)
+- `GET /students/` - Get list of students
+- `GET /admin/` - Admin panel (requires admin role)
+
+## Docker Commands
+
+```bash
+# Build and start
+docker-compose up -d
+
+# View logs
+docker-compose logs -f app
+
+# Stop application
+docker-compose down
+
+# Rebuild without cache
+docker-compose build --no-cache
+```
+
+## Development
+
+- Backend only: `npm run server`
+- Frontend only: `npm run web`
+- Database operations: `npm run db:push`, `npm run db:seed`
+
+## Project Structure
+
+```
+├── server/                 # Backend Express.js application
+│   ├── src/
+│   │   ├── controllers/   # Route controllers
+│   │   ├── middleware/    # Express middleware
+│   │   ├── routes/        # API routes
+│   │   ├── services/      # Business logic
+│   │   └── lib/          # Utilities and database client
+│   └── prisma/           # Database schema and migrations
+├── web/                   # Frontend React application
+│   └── src/
+│       ├── components/    # Reusable React components
+│       ├── pages/         # Page components
+│       ├── api/          # API client functions
+│       └── contexts/     # React contexts
+├── ops/                  # Operations and configuration files
+├── docker-compose.yml    # Docker Compose configuration
+├── Dockerfile           # Multi-stage Docker build
+└── build-docker.sh     # Docker build script
+```
+
+## Environment Files
+
+The project uses multiple environment files for different purposes:
+
+### 1. `.env` (Root Directory)
+**Purpose**: Docker container environment configuration
+```env
+JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
+DATABASE_URL="file:./dev.db"
+API_URL="http://localhost:10003"
+VITE_API_URL="http://localhost:10003"
+```
+
+### 2. `server/.env` (Server Directory)
+**Purpose**: Backend server environment configuration (for local development)
+```env
+JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
+DATABASE_URL="file:./dev.db"
+PORT="10003"
+```
+
+### 3. `web/env.production`
+**Purpose**: Frontend build-time environment variables
+```env
+VITE_API_URL="http://localhost:10003"
+```
+
+## Security Notes
+
+- JWT tokens only contain user ID, no role information
+- All authorization checks use database role verification
+- Admin panel access requires database admin role
+- Challenge involves finding JWT secret and understanding token structure
+- **CTF Hint**: The JWT secret can be found in environment files
