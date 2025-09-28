@@ -179,16 +179,3 @@ DATABASE_URL="file:./dev.db"
 PORT="10003"
 ```
 
-### 3. `web/env.production`
-**Purpose**: Frontend build-time environment variables
-```env
-VITE_API_URL="http://localhost:10003"
-```
-
-## Security Notes
-
-- JWT tokens only contain user ID, no role information
-- All authorization checks use database role verification
-- Admin panel access requires database admin role
-- Challenge involves finding JWT secret and understanding token structure
-- **CTF Hint**: The JWT secret can be found in environment files
