@@ -1,4 +1,4 @@
-# Student Dashboard CTF
+# TWJU CTF
 
 A student dashboard application built with React and Express.js that demonstrates JWT security vulnerabilities. This CTF challenge teaches about JWT token manipulation and database privilege escalation.
 
@@ -47,7 +47,7 @@ npm run setup
 Create a `.env` file in the root directory:
 
 ```env
-JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
+JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y"
 DATABASE_URL="file:./dev.db"
 API_URL="http://localhost:10003"
 VITE_API_URL="http://localhost:10003"
@@ -107,11 +107,21 @@ The JWT tokens contain only:
 
 ## API Endpoints
 
-- `POST /auth/register` - User registration
-- `POST /auth/login` - User authentication
-- `GET /auth/me` - Get current user info (includes admin panel if admin)
-- `GET /students/` - Get list of students
-- `GET /admin/` - Admin panel (requires admin role)
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User authentication
+- `GET /api/auth/me` - Get current user info (includes admin panel if admin)
+- `PATCH /api/auth/me/name` - Update user display name
+- `PATCH /api/auth/me/email` - Update user email
+- `PATCH /api/auth/me/avatar/name` - Update avatar filename
+- `POST /api/auth/me/avatar/upload` - Upload user avatar
+- `GET /api/auth/me/avatar` - Get user avatar
+
+### Admin
+- `GET /api/admin/` - Admin panel (requires admin role)
+
+### Students
+- `GET /api/students/dashboard` - Get student dashboard data
 
 ## Docker Commands
 
@@ -165,7 +175,7 @@ The project uses multiple environment files for different purposes:
 ### 1. `.env` (Root Directory)
 **Purpose**: Docker container environment configuration
 ```env
-JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
+JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y"
 DATABASE_URL="file:./dev.db"
 API_URL="http://localhost:10003"
 VITE_API_URL="http://localhost:10003"
@@ -174,7 +184,7 @@ VITE_API_URL="http://localhost:10003"
 ### 2. `server/.env` (Server Directory)
 **Purpose**: Backend server environment configuration (for local development)
 ```env
-JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y_a222"
+JWT_SECRET="supers3cr3t_adm1n_s1gn1ng_k3y"
 DATABASE_URL="file:./dev.db"
 PORT="10003"
 ```
