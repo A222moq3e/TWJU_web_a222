@@ -2,6 +2,9 @@
 
 A student dashboard application built with React and Express.js that demonstrates JWT security vulnerabilities. This CTF challenge teaches about JWT token manipulation and database privilege escalation.
 
+<img width="1920" height="983" alt="screely-1761502192756" src="https://github.com/user-attachments/assets/9a2e32a7-d898-4cb0-8005-1b273c8c0887" />
+
+
 ## Tech Stack
 
 - **Frontend**: React + TypeScript + Tailwind CSS
